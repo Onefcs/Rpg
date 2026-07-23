@@ -45,11 +45,11 @@ const SPRITE_META={
 };
 
 const CHAR={
-  warrior:{n:'Воин',    cl:'Ближний бой', c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:2.40},
-  mage:   {n:'Маг',     cl:'Магия',       c:'#3498DB', hp:4,  as:1.8, dm:2, sc:2.40},
-  archer: {n:'Лучник',  cl:'Стрелок',     c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:1.90},
-  assasin:{n:'Ассасин', cl:'Скрытность',  c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:1.65},
-  zhnec:  {n:'Рыцарь',  cl:'Защита',      c:'#F39C12', hp:10, as:0.8, dm:4, sc:1.45},
+  warrior:{n:'Воин',    cl:'Ближний бой', c:'#E74C3C', hp:8,  as:1.0, dm:3, df:1.0, cc:0.10, cr:2.0, sc:2.40},
+  mage:   {n:'Маг',     cl:'Магия',       c:'#3498DB', hp:4,  as:1.8, dm:2, df:0.0, cc:0.20, cr:2.5, sc:2.40},
+  archer: {n:'Лучник',  cl:'Стрелок',     c:'#2ECC71', hp:6,  as:1.4, dm:2, df:0.5, cc:0.25, cr:2.0, sc:1.90},
+  assasin:{n:'Ассасин', cl:'Скрытность',  c:'#9B59B6', hp:5,  as:2.0, dm:2, df:0.0, cc:0.30, cr:2.5, sc:1.65},
+  zhnec:  {n:'Рыцарь',  cl:'Защита',      c:'#F39C12', hp:10, as:0.8, dm:4, df:2.0, cc:0.05, cr:1.8, sc:1.45},
 };
 
 const ET=[
@@ -66,12 +66,54 @@ const LOCATIONS=[
   {n:'Проклятые земли',       icon:'💀', bg:3, tier:4, hpMult:14.0, xpMult:8.0, spd:7.0},
 ];
 
+const RARITIES=[
+  {n:'Обычный',     col:'#9E9E9E', wt:50},
+  {n:'Необычный',   col:'#4CAF50', wt:28},
+  {n:'Редкий',      col:'#2196F3', wt:15},
+  {n:'Эпический',   col:'#9C27B0', wt:6},
+  {n:'Легендарный', col:'#FF9800', wt:1},
+];
+
+const SLOT_TYPES  =['weapon','helmet','body','legs','gloves','boots','ring','necklace','belt','pet'];
+const SLOT_LABELS =['Оружие','Шлем','Тело','Ноги','Перчатки','Ботинки','Кольцо','Ожерелье','Пояс','Питомец'];
+const SLOT_ICONS  =['⚔','⛑','🛡','👖','🧤','👟','💍','📿','🔗','🐾'];
+
+const SLOT_BONUS={
+  weapon:  [{stat:'dm', base:1.2}],
+  helmet:  [{stat:'hp', base:2.0}],
+  body:    [{stat:'hp', base:1.5},{stat:'df',base:0.8}],
+  legs:    [{stat:'df', base:1.0}],
+  gloves:  [{stat:'cc', base:0.03}],
+  boots:   [{stat:'as', base:0.2}],
+  ring:    [{stat:'cr', base:0.3}],
+  necklace:[{stat:'dm', base:0.8},{stat:'hp',base:1.5}],
+  belt:    [{stat:'df', base:0.8}],
+  pet:     [{stat:'dm', base:0.6}],
+};
+
+const ITEM_NAMES={
+  weapon:  ['Нож','Кинжал','Меч','Топор','Клинок судьбы'],
+  helmet:  ['Шапка','Шлем','Наголовник','Корона','Венец Героя'],
+  body:    ['Рубаха','Броня','Кираса','Доспех','Латы Богов'],
+  legs:    ['Штаны','Поножи','Набедренник','Кюлоты','Поножи Богов'],
+  gloves:  ['Краги','Перчатки','Латные краги','Рукавицы','Перчатки Теней'],
+  boots:   ['Сапоги','Ботинки','Сандалии','Поножи','Сапоги Ветра'],
+  ring:    ['Кольцо','Перстень','Печатка','Кольцо Силы','Перстень Судьбы'],
+  necklace:['Амулет','Ожерелье','Медальон','Кулон','Ожерелье Богов'],
+  belt:    ['Пояс','Ремень','Кушак','Перевязь','Пояс Силы'],
+  pet:     ['Котёнок','Щенок','Ворон','Дракончик','Феникс'],
+};
+
+const UPGRADE_BASE_COST={hp:30, dm:50, df:40, as:70, cc:100, cr:80};
+const STAT_LABELS={hp:'❤ HP', dm:'⚔ Атака', df:'🛡 Защита', as:'⚡ Ск.атаки', cc:'🎯 Крит%', cr:'💥 Крит×'};
+const STAT_DISP  ={hp:'HP',   dm:'АТК',      df:'ЗАЩ',       as:'СКР',         cc:'КРТ%',     cr:'КРТ×'};
+
 const CW=90, CH=148, CG=7;
 const CX0=(VW-(CORD.length*(CW+CG)-CG))/2;
 const CY=220;
 
 const HDR_H=90, NAV_H=72;
-const NAV_TABS=['game','character','map','quests','profile'];
-const NAV_LABELS=['Игра','Персонаж','Карта','Квесты','Профиль'];
-const NAV_ICONS=['⚔','👤','🗺','📜','👑'];
+const NAV_TABS=['game','inventory','map','quests','profile'];
+const NAV_LABELS=['Игра','Инвентарь','Карта','Квесты','Профиль'];
+const NAV_ICONS=['⚔','🎒','🗺','📜','👑'];
 const XP_TO_LV=[0,40,100,200,350,560,840,1200,1700,2400];

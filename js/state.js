@@ -8,3 +8,5 @@ let selC='warrior', saf, sat;
 let goT=0;
 let xp=0, gold=100, plLv=1, navTab='game', curLoc=0;
 let totalKills=0, gamesPlayed=0, bestScore=0, bestWave=1;
+let equipped={}, statUpgrades={hp:0,dm:0,df:0,as:0,cc:0,cr:0};
+let lastDrop=null;

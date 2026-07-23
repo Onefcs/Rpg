@@ -8,6 +8,23 @@ function drawGame(){
   drawPlayer();
   pt.forEach(drawPart);
   drawHUD();
+  if(lastDrop){
+    const age=performance.now()-lastDrop.t;
+    if(age<2800){
+      const a=Math.max(0,1-age/2800);
+      const item=lastDrop.item;
+      const rc=RARITIES[item.rarity].col;
+      const nw=250,nh=50,nx=(VW-nw)/2,ny=HDR_H+50;
+      ctx.save(); ctx.globalAlpha=a;
+      rR(nx,ny,nw,nh,10); ctx.fillStyle='rgba(10,10,20,0.92)'; ctx.fill();
+      ctx.strokeStyle=rc; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.font='bold 13px sans-serif'; ctx.fillStyle='#FFF'; ctx.textAlign='center';
+      ctx.fillText(SLOT_ICONS[SLOT_TYPES.indexOf(item.slot)]+' '+item.name, VW/2, ny+19);
+      ctx.font='11px sans-serif'; ctx.fillStyle=rc;
+      ctx.fillText('✦ '+RARITIES[item.rarity].n+' · экипировано', VW/2, ny+38);
+      ctx.restore();
+    } else { lastDrop=null; }
+  }
 }
 
 function drawBG(){
@@ -38,10 +55,7 @@ function drawPlayer(){
     ctx.fillStyle='rgba(255,60,60,0.28)'; ctx.fillRect(dx,dy,dw,dh);
     ctx.restore();
   }else{
-    ctx.save();
-    ctx.shadowColor=cfg.c; ctx.shadowBlur=10;
     ctx.drawImage(ad.im,sx,sy,sw,sh,dx,dy,dw,dh);
-    ctx.restore();
   }
 }
 
@@ -121,7 +135,7 @@ function drawPart(p){
   ctx.save(); ctx.globalAlpha=p.l;
   if(p.tp==='tx'){
     ctx.font=`bold ${p.sz}px sans-serif`; ctx.textAlign='center';
-    ctx.fillStyle=p.col; ctx.shadowColor=p.col; ctx.shadowBlur=10;
+    ctx.fillStyle=p.col;
     ctx.fillText(p.txt,p.x,p.y);
   }else if(p.tp==='sp'){
     ctx.fillStyle=p.col; ctx.shadowColor=p.col; ctx.shadowBlur=4;
@@ -308,7 +322,7 @@ function drawNav(){
 function drawTabScreen(tab){
   ctx.fillStyle='#0C0D1A';
   ctx.fillRect(0,HDR_H,VW,VH-HDR_H-NAV_H);
-  if(tab==='character') drawCharacterTab();
+  if(tab==='inventory') drawInventoryTab();
   else if(tab==='map')     drawMapTab();
   else if(tab==='quests')  drawQuestsTab();
   else if(tab==='profile') drawProfileTab();
@@ -334,51 +348,108 @@ function statCard(x,y,w,h,label,value,col){
   ctx.fillText(label, x+w/2, y+h*0.86);
 }
 
-function drawCharacterTab(){
-  tabTitle('ПЕРСОНАЖ');
-  const c=(ST==='PLAY'&&pl)?pl.char:selC;
-  const cfg=CHAR[c];
-  const ad=imgs.ch[c].idle;
-  const fw=ad.w/ad.f, spSx=ad.tx||0, spSy=ad.ty||0;
-  const spSw=ad.tw||fw, spSh=ad.th||ad.h;
-  const sc2=3.0, dh=spSh*sc2, dw=spSw*sc2, baseY=HDR_H+56;
+function drawInventoryTab(){
+  tabTitle('ИНВЕНТАРЬ');
+  const cfg=(ST==='PLAY'&&pl)?pl.cfg:CHAR[selC];
+  const y0=HDR_H+52;
+  const slotH=50, slotGap=5, colW=(VW-26)/2;
 
-  // Character portrait area
-  ctx.fillStyle='#12142A'; ctx.fillRect(0,HDR_H+46,VW,dh+28);
-  // Glow behind sprite
-  const rg=ctx.createRadialGradient(VW*0.26,baseY+dh*0.5,10,VW*0.26,baseY+dh*0.5,90);
-  rg.addColorStop(0,cfg.c+'44'); rg.addColorStop(1,'transparent');
-  ctx.fillStyle=rg; ctx.fillRect(0,HDR_H+46,VW,dh+28);
-  ctx.drawImage(ad.im,spSx,spSy,spSw,spSh, VW*0.26-dw/2, baseY, dw, dh);
+  // ── Equipment grid (5 rows × 2 cols) ──
+  SLOT_TYPES.forEach((slot,i)=>{
+    const col=i%2, row=Math.floor(i/2);
+    const sx=10+col*(colW+6), sy=y0+row*(slotH+slotGap);
+    const item=equipped[slot];
+    const rc=item?RARITIES[item.rarity].col:'rgba(255,255,255,0.07)';
 
-  // Equipment slots (right column)
-  const slots=[
-    {icon:'⚔️', label:'Оружие', item:'Деревянный меч'},
-    {icon:'🛡️', label:'Броня',  item:null},
-    {icon:'⛑️', label:'Шлем',   item:null},
-    {icon:'👟', label:'Сапоги', item:null},
-  ];
-  const sx=VW*0.50, sg=58;
-  slots.forEach((slot,i)=>{
-    const ty=baseY+i*sg;
-    rR(sx,ty,VW-sx-14,48,8);
-    ctx.fillStyle=slot.item?'#1E2038':'#141628'; ctx.fill();
-    ctx.strokeStyle=slot.item?cfg.c+'55':'rgba(255,255,255,0.08)';
-    ctx.lineWidth=1; ctx.stroke();
-    ctx.font='18px sans-serif'; ctx.textAlign='left'; ctx.fillStyle='#FFF';
-    ctx.fillText(slot.icon, sx+10, ty+30);
-    ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.font='10px sans-serif';
-    ctx.fillText(slot.label, sx+34, ty+16);
-    ctx.fillStyle=slot.item?'#FFFFFF':'rgba(255,255,255,0.22)';
-    ctx.font=slot.item?'bold 12px sans-serif':'12px sans-serif';
-    ctx.fillText(slot.item||'— пусто —', sx+34, ty+34);
+    rR(sx,sy,colW,slotH,8);
+    ctx.fillStyle=item?rc+'18':'#111326'; ctx.fill();
+    ctx.strokeStyle=item?rc:'rgba(255,255,255,0.07)';
+    ctx.lineWidth=item?1.5:1; ctx.stroke();
+
+    // Left accent bar
+    ctx.fillStyle=item?rc:'rgba(255,255,255,0.10)';
+    ctx.fillRect(sx,sy,3,slotH);
+
+    // Slot icon
+    ctx.font='20px sans-serif'; ctx.textAlign='left';
+    ctx.fillStyle=item?'#FFF':'rgba(255,255,255,0.22)';
+    ctx.fillText(SLOT_ICONS[i], sx+8, sy+33);
+
+    if(item){
+      ctx.fillStyle=rc; ctx.font='bold 11px sans-serif'; ctx.textAlign='left';
+      ctx.fillText(item.name, sx+34, sy+18);
+      ctx.fillStyle='rgba(255,255,255,0.40)'; ctx.font='10px sans-serif';
+      ctx.fillText(RARITIES[item.rarity].n, sx+34, sy+32);
+      // Bonus summary
+      const bonusTxt=(SLOT_BONUS[slot]||[]).map(b=>{
+        const v=(b.base*(item.rarity+1)*0.8).toFixed(1);
+        return '+'+v+' '+STAT_DISP[b.stat];
+      }).join('  ');
+      ctx.fillStyle='rgba(255,255,255,0.28)'; ctx.font='9px sans-serif';
+      ctx.fillText(bonusTxt, sx+34, sy+46);
+    } else {
+      ctx.fillStyle='rgba(255,255,255,0.22)'; ctx.font='11px sans-serif'; ctx.textAlign='left';
+      ctx.fillText(SLOT_LABELS[i], sx+34, sy+19);
+      ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.font='10px sans-serif';
+      ctx.fillText('— пусто —', sx+34, sy+35);
+    }
   });
 
-  // Stats strip
-  const sy2=baseY+dh+16;
-  const sw2=(VW-28)/3;
-  [['⚔','Сила',cfg.dm],['🛡','HP',cfg.hp],['⚡','Скор.',cfg.as.toFixed(1)]].forEach(([ic,lb,vl],i)=>{
-    statCard(10+i*(sw2+4), sy2, sw2, 56, lb, ic+' '+vl, cfg.c);
+  // ── Stat upgrades ──
+  const gridEnd=y0+5*slotH+4*slotGap;
+  const secY=gridEnd+12;
+  const es=eff();
+  ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.font='bold 10px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('ПРОКАЧКА ХАРАКТЕРИСТИК', 12, secY+1);
+  ctx.fillStyle='#F39C12'; ctx.font='bold 10px sans-serif'; ctx.textAlign='right';
+  ctx.fillText('💰 '+gold, VW-12, secY+1);
+
+  const statKeys=['hp','dm','df','as','cc','cr'];
+  const cw=(VW-28)/3, ch=70, cg=4;
+  const cardsY=secY+14;
+
+  statKeys.forEach((sk,i)=>{
+    const col=i%3, row=Math.floor(i/3);
+    const cx=10+col*(cw+cg), cy=cardsY+row*(ch+cg);
+    const lv=statUpgrades[sk]||0;
+    const cost=Math.round((UPGRADE_BASE_COST[sk]||50)*Math.pow(1.5,lv));
+    const canAfford=gold>=cost;
+
+    rR(cx,cy,cw,ch,8);
+    ctx.fillStyle='#13152A'; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=1; ctx.stroke();
+
+    // Stat label
+    ctx.fillStyle='rgba(255,255,255,0.40)'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(STAT_LABELS[sk], cx+cw/2, cy+14);
+
+    // Current value
+    let valStr;
+    if(sk==='cc')      valStr=Math.round(es.cc*100)+'%';
+    else if(sk==='cr') valStr=es.cr.toFixed(1)+'×';
+    else if(sk==='as') valStr=es.as.toFixed(1);
+    else if(sk==='hp') valStr=String(es.hp);
+    else               valStr=es.dm.toFixed(1); // dm or df
+    if(sk==='df') valStr=es.df.toFixed(1);
+
+    ctx.fillStyle='#FFFFFF'; ctx.font='bold 18px sans-serif';
+    ctx.fillText(valStr, cx+cw/2, cy+36);
+
+    // Level dots
+    if(lv>0){
+      ctx.fillStyle=canAfford?'#F39C12':'rgba(243,156,18,0.40)';
+      ctx.font='8px sans-serif';
+      ctx.fillText('Ур.'+lv, cx+cw/2, cy+48);
+    }
+
+    // Upgrade button
+    const btnW=cw-12, btnH=17, btnX=cx+6, btnY=cy+ch-22;
+    rR(btnX,btnY,btnW,btnH,6);
+    ctx.fillStyle=canAfford?'rgba(243,156,18,0.20)':'rgba(255,255,255,0.04)'; ctx.fill();
+    ctx.strokeStyle=canAfford?'#F39C1299':'rgba(255,255,255,0.07)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle=canAfford?'#F39C12':'rgba(255,255,255,0.22)';
+    ctx.font='bold 9px sans-serif';
+    ctx.fillText('+ '+cost+' 💰', cx+cw/2, btnY+12);
   });
 }
 
@@ -401,7 +472,7 @@ function drawMapTab(){
 
     // Left color bar
     ctx.fillStyle=unlocked?tierColors[i]+'CC':'#2A2A2A';
-    ctx.beginPath(); ctx.roundRect(cardX,cy,4,cardH,{upperLeft:10,lowerLeft:10}); ctx.fill();
+    ctx.fillRect(cardX,cy,4,cardH);
 
     ctx.globalAlpha=unlocked?1:0.28;
 
