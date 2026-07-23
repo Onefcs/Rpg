@@ -63,7 +63,7 @@ const CW=90, CH=148, CG=7;
 const CX0=(VW-(CORD.length*(CW+CG)-CG))/2;
 const CY=220;
 
-const HDR_H=90, NAV_H=72;
+const HDR_H=62, NAV_H=56;
 const NAV_TABS=['game','character','map','quests','profile'];
 const NAV_LABELS=['Игра','Персонаж','Карта','Квесты','Профиль'];
 const NAV_ICONS=['⚔','👤','🗺','📜','👑'];
