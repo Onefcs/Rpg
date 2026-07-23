@@ -1,11 +1,13 @@
 function drawGame(){
   drawBG();
+  // Ground shadow strip with gradient
   const gg=ctx.createLinearGradient(0,GY,0,GY+28);
   gg.addColorStop(0,'rgba(0,0,0,0.30)'); gg.addColorStop(1,'transparent');
   ctx.fillStyle=gg; ctx.fillRect(0,GY,VW,28);
   en.filter(e=>e.x>PX-10).forEach(drawEnemy);
   drawPlayer();
   pt.forEach(drawPart);
+  drawHUD();
 }
 
 function drawBG(){
@@ -45,7 +47,7 @@ function drawPlayer(){
 
 function drawEnemy(e){
   const et=ET[e.tp];
-  const bh=110, h=bh*e.s, w=h*0.68, cx=e.x;
+  const bh=84, h=bh*e.s, w=h*0.68, cx=e.x;
   const dead=e.hp<=0, al=dead?Math.max(0,1-(e.dt||0)/600):1;
   const bob=dead?0:Math.sin(Date.now()/180+e.x*0.05)*2.5;
   ctx.save(); ctx.globalAlpha=al;
@@ -128,7 +130,24 @@ function drawPart(p){
   ctx.restore();
 }
 
-function drawHUD(){}
+function drawHUD(){
+  const y0=HDR_H+14;
+  // Score pill (left)
+  const scTxt='⚔  '+sc;
+  ctx.font='bold 20px sans-serif'; ctx.textAlign='left';
+  const scW=ctx.measureText(scTxt).width+20;
+  rR(10,y0,scW,30,15); ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fill();
+  ctx.fillStyle='#F39C12'; ctx.fillText(scTxt,20,y0+22);
+  // Wave pill (right)
+  const wvTxt='Волна '+wave;
+  ctx.font='bold 13px sans-serif'; ctx.textAlign='right';
+  const wvW=ctx.measureText(wvTxt).width+20;
+  rR(VW-10-wvW,y0,wvW,30,15); ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fill();
+  ctx.fillStyle='#FFFFFF'; ctx.fillText(wvTxt,VW-10,y0+22);
+  // Speed tag
+  ctx.font='11px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.50)';
+  ctx.fillText('×'+(gspd/3.5).toFixed(1),VW-10,y0+40);
+}
 
 function heart(cx,cy,s,filled){
   ctx.save(); ctx.fillStyle=filled?'#E74C3C':'rgba(180,30,30,0.18)';
@@ -169,135 +188,119 @@ function drawOver(dt){
 
 // ─── HEADER ──────────────────────────────────────────────────────────────────
 function drawHeader(){
-  if(ST==='PLAY'&&pl){ drawPlayOverlay(); return; }
-  drawStatHeader();
-}
+  const isPlay=ST==='PLAY'&&pl;
+  const cfg=isPlay?pl.cfg:CHAR[selC];
+  const c=isPlay?pl.char:selC;
+  const curHp=isPlay?pl.hp:cfg.hp;
+  const maxHp=isPlay?pl.mhp:cfg.hp;
 
-// Minimal transparent overlay during gameplay (no solid bar)
-function drawPlayOverlay(){
-  const g=ctx.createLinearGradient(0,0,0,64);
-  g.addColorStop(0,'rgba(0,0,0,0.82)'); g.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=g; ctx.fillRect(0,0,VW,64);
+  // ── Panel ──
+  ctx.fillStyle='#0F1120';
+  ctx.fillRect(0,0,VW,HDR_H);
+  // Left accent gradient
+  const ag=ctx.createLinearGradient(0,0,0,HDR_H);
+  ag.addColorStop(0,cfg.c); ag.addColorStop(1,cfg.c+'66');
+  ctx.fillStyle=ag; ctx.fillRect(0,0,4,HDR_H);
+  // Bottom separator
+  ctx.fillStyle='rgba(255,255,255,0.09)'; ctx.fillRect(0,HDR_H-1,VW,1);
 
-  const cfg=pl.cfg;
-  const hpPct=Math.max(0,Math.min(pl.hp/pl.mhp,1));
-
-  // LEFT: color dot + HP bar
-  ctx.fillStyle=cfg.c;
-  ctx.beginPath(); ctx.arc(16,18,7,0,Math.PI*2); ctx.fill();
-  const bx=30, bw=104, bh=8, by=14;
-  rR(bx,by,bw,bh,4); ctx.fillStyle='rgba(255,255,255,0.14)'; ctx.fill();
-  if(hpPct>0){
-    const hg=ctx.createLinearGradient(bx,0,bx+bw,0);
-    hg.addColorStop(0,'#C0392B'); hg.addColorStop(1,'#E74C3C');
-    rR(bx,by,Math.max(bw*hpPct,bh),bh,4); ctx.fillStyle=hg; ctx.fill();
-  }
-  ctx.font='bold 8px sans-serif'; ctx.textAlign='left'; ctx.fillStyle='rgba(255,255,255,0.90)';
-  ctx.fillText(pl.hp+'/'+pl.mhp, bx+4, by+bh-1);
-
-  // CENTER: score
-  ctx.font='bold 24px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#FFFFFF';
-  ctx.fillText(sc, VW/2, 26);
-
-  // RIGHT: wave badge
-  const wTxt='Волна '+wave;
-  ctx.font='bold 10px sans-serif'; ctx.textAlign='left';
-  const wW=ctx.measureText(wTxt).width+16;
-  const wX=VW-10-wW;
-  rR(wX,9,wW,18,6); ctx.fillStyle='rgba(243,156,18,0.22)'; ctx.fill();
-  ctx.strokeStyle='rgba(243,156,18,0.48)'; ctx.lineWidth=1; ctx.stroke();
-  ctx.fillStyle='#F39C12'; ctx.textAlign='center';
-  ctx.fillText(wTxt, wX+wW/2, 22);
-  ctx.font='9px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.textAlign='right';
-  ctx.fillText('×'+(gspd/3.5).toFixed(1), VW-10, 38);
-}
-
-// Solid header for select screen + tabs
-function drawStatHeader(){
-  const cfg=CHAR[selC], c=selC;
-
-  ctx.fillStyle='#0C0E1C'; ctx.fillRect(0,0,VW,HDR_H);
-  // Bottom accent line in character color
-  const ag=ctx.createLinearGradient(0,0,VW,0);
-  ag.addColorStop(0,cfg.c+'DD'); ag.addColorStop(0.45,cfg.c+'44'); ag.addColorStop(1,'transparent');
-  ctx.fillStyle=ag; ctx.fillRect(0,HDR_H-2,VW,2);
-
-  // Avatar
-  const avR=15, avX=22, avY=22;
-  ctx.fillStyle=cfg.c+'18'; ctx.beginPath(); ctx.arc(avX,avY,avR,0,Math.PI*2); ctx.fill();
+  // ── Avatar ──
+  const avR=19, avX=34, avY=30;
+  ctx.fillStyle=cfg.c+'25';
+  ctx.beginPath(); ctx.arc(avX,avY,avR,0,Math.PI*2); ctx.fill();
   const ad=imgs.ch[c].idle;
-  const fw=ad.w/ad.f, spSw=ad.tw||fw, spSh=ad.th||ad.h;
+  const fw=ad.w/ad.f, spSx=ad.tx||0, spSy=ad.ty||0;
+  const spSw=ad.tw||fw, spSh=ad.th||ad.h;
   ctx.save();
   ctx.beginPath(); ctx.arc(avX,avY,avR-1,0,Math.PI*2); ctx.clip();
-  const avSc=avR*2*0.88/Math.max(spSw,spSh);
-  ctx.drawImage(ad.im,ad.tx||0,ad.ty||0,spSw,spSh,
-    avX-spSw*avSc/2, avY-spSh*avSc*0.54, spSw*avSc, spSh*avSc);
+  const avSc=avR*2*0.90/Math.max(spSw,spSh);
+  ctx.drawImage(ad.im,spSx,spSy,spSw,spSh, avX-spSw*avSc/2, avY-spSh*avSc*0.56, spSw*avSc, spSh*avSc);
   ctx.restore();
-  ctx.strokeStyle=cfg.c+'CC'; ctx.lineWidth=1.5;
+  ctx.strokeStyle=cfg.c; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.arc(avX,avY,avR,0,Math.PI*2); ctx.stroke();
 
-  // Name + class
-  const nx=avX+avR+9;
-  ctx.fillStyle='#FFFFFF'; ctx.font='bold 13px sans-serif'; ctx.textAlign='left';
-  ctx.fillText(cfg.n, nx, avY-4);
-  ctx.font='10px sans-serif'; ctx.fillStyle=cfg.c+'AA';
-  ctx.fillText(cfg.cl+'  💰 '+gold, nx, avY+9);
+  // ── Name ──
+  const nx=avX+avR+11;
+  ctx.fillStyle='#FFFFFF'; ctx.font='bold 14px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(cfg.n, nx, avY-6);
 
-  // Level pill
-  ctx.font='bold 10px sans-serif';
-  const lvTxt='Lv.'+plLv;
-  const lvW=ctx.measureText(lvTxt).width+12;
-  const lvX=VW-8-lvW;
-  rR(lvX,5,lvW,17,5); ctx.fillStyle='rgba(243,156,18,0.16)'; ctx.fill();
-  ctx.strokeStyle='#F39C1278'; ctx.lineWidth=1; ctx.stroke();
+  // ── Level badge ──
+  ctx.font='bold 11px sans-serif';
+  const lvTxt='Ур. '+plLv;
+  const lvW=ctx.measureText(lvTxt).width+14;
+  const lvX=VW-10-lvW, lvY0=6, lvH=20;
+  rR(lvX,lvY0,lvW,lvH,5);
+  ctx.fillStyle='rgba(243,156,18,0.22)'; ctx.fill();
+  ctx.strokeStyle='#F39C12BB'; ctx.lineWidth=1; ctx.stroke();
   ctx.fillStyle='#F39C12'; ctx.textAlign='center';
-  ctx.fillText(lvTxt, lvX+lvW/2, 17);
+  ctx.fillText(lvTxt, lvX+lvW/2, lvY0+14);
 
-  // HP bar (y=34 → bottom=42)
-  const bx=8, bw=VW-16, hpY=34, hpH=8;
-  rR(bx,hpY,bw,hpH,hpH/2); ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.fill();
-  const hg=ctx.createLinearGradient(bx,0,bx+bw,0);
-  hg.addColorStop(0,'#B03020'); hg.addColorStop(1,'#E74C3C');
-  rR(bx,hpY,bw,hpH,hpH/2); ctx.fillStyle=hg; ctx.fill();
-  ctx.font='bold 9px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.85)';
-  ctx.textAlign='left'; ctx.fillText('HP', bx+5, hpY+hpH-1);
-  ctx.textAlign='right'; ctx.fillText(cfg.hp+'/'+cfg.hp, bx+bw-5, hpY+hpH-1);
+  // ── Class · score · gold ──
+  ctx.font='11px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.48)'; ctx.textAlign='left';
+  ctx.fillText(cfg.cl+' · ⚔ '+(isPlay?sc:0)+'  💰 '+gold, nx, avY+9);
 
-  // XP strip (y=44 → bottom=48 = HDR_H)
-  const xpPrev=XP_TO_LV[plLv-1]||0, xpNext=XP_TO_LV[plLv]||XP_TO_LV[XP_TO_LV.length-1];
+  // ── HP bar ──
+  const bx=8, bw=VW-16, hpY=avY+avR+8, hpH=13;
+  const hpPct=Math.max(0,Math.min(curHp/maxHp,1));
+  rR(bx,hpY,bw,hpH,hpH/2); ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fill();
+  if(hpPct>0){
+    const hw=Math.max(bw*hpPct,hpH);
+    const hg=ctx.createLinearGradient(bx,0,bx+bw,0);
+    hg.addColorStop(0,'#B03020'); hg.addColorStop(1,'#E74C3C');
+    rR(bx,hpY,hw,hpH,hpH/2); ctx.fillStyle=hg; ctx.fill();
+    rR(bx+2,hpY+2,hw-4,hpH*0.35,2);
+    ctx.fillStyle='rgba(255,255,255,0.14)'; ctx.fill();
+  }
+  ctx.font='bold 10px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.90)';
+  ctx.textAlign='left';  ctx.fillText('HP', bx+6, hpY+hpH-2);
+  ctx.textAlign='right'; ctx.fillText(curHp+'/'+maxHp, bx+bw-6, hpY+hpH-2);
+
+  // ── XP bar ──
+  const xpPrev=XP_TO_LV[plLv-1]||0;
+  const xpNext=XP_TO_LV[plLv]||XP_TO_LV[XP_TO_LV.length-1];
   const xpCur=Math.max(0,xp-xpPrev), xpRange=Math.max(1,xpNext-xpPrev);
-  const xpY=hpY+hpH+2, xpH=4;
-  ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.fillRect(bx,xpY,bw,xpH);
-  if(xpCur>0){
+  const xpPct=Math.min(xpCur/xpRange,1);
+  const xpY=hpY+hpH+5, xpH=9;
+  rR(bx,xpY,bw,xpH,xpH/2); ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.fill();
+  if(xpPct>0){
+    const xw=Math.max(bw*xpPct,xpH);
     const xg=ctx.createLinearGradient(bx,0,bx+bw,0);
     xg.addColorStop(0,'#5B21B6'); xg.addColorStop(1,'#A855F7');
-    ctx.fillStyle=xg; ctx.fillRect(bx,xpY,bw*xpCur/xpRange,xpH);
+    rR(bx,xpY,xw,xpH,xpH/2); ctx.fillStyle=xg; ctx.fill();
   }
+  ctx.font='10px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)';
+  ctx.textAlign='left';  ctx.fillText('XP', bx+6, xpY+xpH-1);
+  ctx.textAlign='right'; ctx.fillText(xpCur+'/'+xpRange, bx+bw-6, xpY+xpH-1);
 }
 
 // ─── NAVIGATION BAR ──────────────────────────────────────────────────────────
 function drawNav(){
-  ctx.fillStyle='rgba(8,9,18,0.97)'; ctx.fillRect(0,VH-NAV_H,VW,NAV_H);
-  ctx.fillStyle='rgba(255,255,255,0.09)'; ctx.fillRect(0,VH-NAV_H,VW,1);
+  ctx.fillStyle='#0F1120';
+  ctx.fillRect(0,VH-NAV_H,VW,NAV_H);
+  ctx.fillStyle='rgba(255,255,255,0.10)'; ctx.fillRect(0,VH-NAV_H,VW,1);
 
   const tabW=VW/NAV_TABS.length;
   NAV_TABS.forEach((tab,i)=>{
     const x=i*tabW, cx=x+tabW/2, active=navTab===tab;
+
     if(active){
-      // Dot indicator at top edge
       ctx.fillStyle='#F39C12';
-      ctx.beginPath(); ctx.arc(cx,VH-NAV_H+4,3,0,Math.PI*2); ctx.fill();
-      // Subtle pill bg
-      rR(x+6,VH-NAV_H+2,tabW-12,NAV_H-4,8);
-      ctx.fillStyle='rgba(243,156,18,0.10)'; ctx.fill();
+      ctx.fillRect(x+8,VH-NAV_H,tabW-16,2);
+      ctx.fillStyle='rgba(243,156,18,0.10)';
+      ctx.fillRect(x,VH-NAV_H,tabW,NAV_H);
     }
-    ctx.font='20px sans-serif'; ctx.textAlign='center';
-    ctx.globalAlpha=active?1.0:0.30; ctx.fillStyle='#FFFFFF';
-    ctx.fillText(NAV_ICONS[i], cx, VH-NAV_H+26);
+
+    // Icon (emoji — sharp at any DPR once canvas is high-res)
+    ctx.font='22px sans-serif'; ctx.textAlign='center';
+    ctx.globalAlpha=active?1.0:0.38;
+    ctx.fillStyle='#FFFFFF';
+    ctx.fillText(NAV_ICONS[i], cx, VH-NAV_H+30);
     ctx.globalAlpha=1;
-    ctx.font=(active?'bold ':'')+' 9px sans-serif';
-    ctx.fillStyle=active?'#F39C12':'rgba(255,255,255,0.28)';
-    ctx.fillText(NAV_LABELS[i], cx, VH-NAV_H+42);
+
+    // Label
+    ctx.font=(active?'bold ':'')+' 10px sans-serif';
+    ctx.fillStyle=active?'#F39C12':'rgba(255,255,255,0.38)';
+    ctx.fillText(NAV_LABELS[i], cx, VH-NAV_H+48);
   });
 }
 

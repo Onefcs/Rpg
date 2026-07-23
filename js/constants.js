@@ -45,11 +45,11 @@ const SPRITE_META={
 };
 
 const CHAR={
-  warrior:{n:'Воин',    cl:'Ближний бой', c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:3.80},
-  mage:   {n:'Маг',     cl:'Магия',       c:'#3498DB', hp:4,  as:1.8, dm:2, sc:3.80},
-  archer: {n:'Лучник',  cl:'Стрелок',     c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:3.00},
-  assasin:{n:'Ассасин', cl:'Скрытность',  c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:2.60},
-  zhnec:  {n:'Рыцарь',  cl:'Защита',      c:'#F39C12', hp:10, as:0.8, dm:4, sc:2.30},
+  warrior:{n:'Воин',    cl:'Ближний бой', c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:2.40},
+  mage:   {n:'Маг',     cl:'Магия',       c:'#3498DB', hp:4,  as:1.8, dm:2, sc:2.40},
+  archer: {n:'Лучник',  cl:'Стрелок',     c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:1.90},
+  assasin:{n:'Ассасин', cl:'Скрытность',  c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:1.65},
+  zhnec:  {n:'Рыцарь',  cl:'Защита',      c:'#F39C12', hp:10, as:0.8, dm:4, sc:1.45},
 };
 
 const ET=[
@@ -63,7 +63,7 @@ const CW=90, CH=148, CG=7;
 const CX0=(VW-(CORD.length*(CW+CG)-CG))/2;
 const CY=220;
 
-const HDR_H=48, NAV_H=52;
+const HDR_H=90, NAV_H=72;
 const NAV_TABS=['game','character','map','quests','profile'];
 const NAV_LABELS=['Игра','Персонаж','Карта','Квесты','Профиль'];
 const NAV_ICONS=['⚔','👤','🗺','📜','👑'];
