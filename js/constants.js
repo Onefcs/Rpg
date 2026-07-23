@@ -61,9 +61,9 @@ const ET=[
 
 const CW=90, CH=148, CG=7;
 const CX0=(VW-(CORD.length*(CW+CG)-CG))/2;
-const CY=200;
+const CY=210;
 
-const HDR_H=62, NAV_H=72;
+const HDR_H=82, NAV_H=72;
 const NAV_TABS=['game','inventory','friends','quests','profile'];
 const NAV_LABELS=['Игра','Инвент.','Друзья','Задания','Профиль'];
 const NAV_ICONS=['⚔','🎒','👥','📜','👤'];

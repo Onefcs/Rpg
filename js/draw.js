@@ -131,7 +131,7 @@ function drawPart(p){
 }
 
 function drawHUD(){
-  const y0=HDR_H+8+8;
+  const y0=HDR_H+8;
   ctx.shadowColor='#FFD700'; ctx.shadowBlur=6;
   ctx.font='bold 24px sans-serif'; ctx.fillStyle='#FFD700'; ctx.textAlign='left';
   ctx.fillText('⚔ '+sc,12,y0+20);
@@ -179,52 +179,77 @@ function drawOver(dt){
 function drawHeader(){
   const isPlay=ST==='PLAY'&&pl;
   const cfg=isPlay?pl.cfg:CHAR[selC];
+  const c=isPlay?pl.char:selC;
   const curHp=isPlay?pl.hp:cfg.hp;
   const maxHp=isPlay?pl.mhp:cfg.hp;
 
-  // Panel background
-  const hg=ctx.createLinearGradient(0,0,0,HDR_H+8);
-  hg.addColorStop(0,'rgba(4,4,20,0.97)'); hg.addColorStop(1,'rgba(4,4,20,0.78)');
-  ctx.fillStyle=hg; ctx.fillRect(0,0,VW,HDR_H+8);
-  ctx.fillStyle=cfg.c+'55'; ctx.fillRect(0,HDR_H-1,VW,2);
+  // Background panel
+  ctx.fillStyle='rgba(6,6,24,0.97)'; ctx.fillRect(0,0,VW,HDR_H);
+  ctx.fillStyle=cfg.c+'33'; ctx.fillRect(0,HDR_H-1,VW,1);
 
-  // Level badge (left)
+  // ── Circular avatar ──
+  const avR=20, avX=14+avR, avY=22;
+  const ad=imgs.ch[c].idle;
+  const fw=ad.w/ad.f, spSx=ad.tx||0, spSy=ad.ty||0;
+  const spSw=ad.tw||fw, spSh=ad.th||ad.h;
   ctx.save();
-  rR(10,9,44,22,5); ctx.fillStyle=cfg.c+'33'; ctx.fill();
-  ctx.strokeStyle=cfg.c+'66'; ctx.lineWidth=1; ctx.stroke();
-  ctx.fillStyle=cfg.c; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
-  ctx.fillText('Lv.'+plLv,32,24);
+  ctx.beginPath(); ctx.arc(avX,avY,avR,0,Math.PI*2);
+  ctx.fillStyle=cfg.c+'22'; ctx.fill(); ctx.clip();
+  const spSc=(avR*2*0.86)/Math.max(spSw,spSh);
+  const sdw=spSw*spSc, sdh=spSh*spSc;
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(ad.im,spSx,spSy,spSw,spSh, avX-sdw/2, avY-sdh*0.54, sdw, sdh);
   ctx.restore();
-  ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.font='bold 12px sans-serif'; ctx.textAlign='left';
-  ctx.fillText(cfg.n,10,46);
+  ctx.save(); ctx.shadowColor=cfg.c; ctx.shadowBlur=9;
+  ctx.strokeStyle=cfg.c+'CC'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(avX,avY,avR,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
 
-  // Gold (right)
-  ctx.shadowColor='#FFD700'; ctx.shadowBlur=8;
-  ctx.fillStyle='#FFD700'; ctx.font='bold 14px sans-serif'; ctx.textAlign='right';
-  ctx.fillText('💰 '+gold,VW-10,26);
-  ctx.shadowBlur=0;
+  // ── Name + level ──
+  const nameX=avX+avR+10;
+  ctx.fillStyle='#FFF'; ctx.font='bold 15px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(cfg.n, nameX, avY-2);
+  ctx.fillStyle=cfg.c+'CC'; ctx.font='11px sans-serif';
+  ctx.fillText('Ур. '+plLv, nameX, avY+14);
 
-  // HP hearts (centre)
-  const show=Math.min(maxHp,8), hs=16, hsp=19;
-  const htot=show*hsp, hx0=(VW-htot)/2;
-  for(let i=0;i<show;i++) heart(hx0+i*hsp+hs/2,42,hs,i<curHp);
-  if(maxHp>8){
-    ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='9px sans-serif'; ctx.textAlign='left';
-    ctx.fillText('+'+( maxHp-8),hx0+show*hsp+2,46);
+  // ── Gold badge ──
+  ctx.save(); ctx.shadowColor='#FFD700'; ctx.shadowBlur=7;
+  ctx.fillStyle='#FFD700'; ctx.font='bold 13px sans-serif'; ctx.textAlign='right';
+  ctx.fillText('💰 '+gold, VW-10, avY+4);
+  ctx.restore();
+
+  // ── HP bar ──
+  const barX=12, barW=VW-24;
+  const hpY=avY+avR+7, hpH=11;
+  const hpPct=Math.max(0,Math.min(curHp/maxHp,1));
+  const hpCol=hpPct>0.55?'#2ECC71':hpPct>0.28?'#F39C12':'#E74C3C';
+  ctx.fillStyle='rgba(255,255,255,0.07)'; rR(barX,hpY,barW,hpH,hpH/2); ctx.fill();
+  if(hpPct>0){
+    const hw=Math.max(barW*hpPct,hpH);
+    const hc=ctx.createLinearGradient(barX,0,barX+barW,0);
+    hc.addColorStop(0,hpCol+'AA'); hc.addColorStop(1,hpCol);
+    ctx.fillStyle=hc; rR(barX,hpY,hw,hpH,hpH/2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.18)'; rR(barX,hpY,hw,hpH*0.42,hpH/2); ctx.fill();
   }
-  ctx.fillStyle='rgba(255,255,255,0.30)'; ctx.font='8px sans-serif'; ctx.textAlign='right';
-  ctx.fillText('HP',hx0-4,46);
+  ctx.fillStyle='rgba(255,255,255,0.80)'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('❤  '+curHp+' / '+maxHp, barX+barW/2, hpY+hpH-1);
 
-  // XP bar (strip below panel)
+  // ── XP bar ──
   const xpPrev=XP_TO_LV[plLv-1]||0;
   const xpNext=XP_TO_LV[plLv]||XP_TO_LV[XP_TO_LV.length-1];
-  const xpPct=xpNext>xpPrev?Math.min((xp-xpPrev)/(xpNext-xpPrev),1):1;
-  ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.fillRect(0,HDR_H,VW,8);
-  const xg=ctx.createLinearGradient(0,0,VW,0);
-  xg.addColorStop(0,cfg.c+'70'); xg.addColorStop(1,cfg.c);
-  ctx.fillStyle=xg; ctx.fillRect(0,HDR_H,VW*xpPct,8);
-  ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font='7px sans-serif'; ctx.textAlign='right';
-  ctx.fillText('XP '+(xp-xpPrev)+'/'+(xpNext-xpPrev),VW-3,HDR_H+7);
+  const xpCur=xp-xpPrev, xpRange=xpNext-xpPrev;
+  const xpPct=xpRange>0?Math.min(xpCur/xpRange,1):1;
+  const xpY=hpY+hpH+5, xpH=9;
+  ctx.fillStyle='rgba(255,255,255,0.05)'; rR(barX,xpY,barW,xpH,xpH/2); ctx.fill();
+  if(xpPct>0){
+    const xw=Math.max(barW*xpPct,xpH);
+    const xg=ctx.createLinearGradient(barX,0,barX+barW,0);
+    xg.addColorStop(0,cfg.c+'77'); xg.addColorStop(1,cfg.c);
+    ctx.fillStyle=xg; rR(barX,xpY,xw,xpH,xpH/2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.15)'; rR(barX,xpY,xw,xpH*0.44,xpH/2); ctx.fill();
+  }
+  ctx.fillStyle='rgba(255,255,255,0.48)'; ctx.font='7px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('⭐ '+xpCur+' / '+xpRange+' XP → Лв.'+(plLv<XP_TO_LV.length?plLv+1:'MAX'), barX+barW/2, xpY+xpH-0.5);
 }
 
 // ─── NAVIGATION BAR ──────────────────────────────────────────────────────────
@@ -254,7 +279,7 @@ function drawNav(){
 // ─── TAB SCREENS ─────────────────────────────────────────────────────────────
 function drawTabScreen(tab){
   ctx.fillStyle='rgba(4,4,20,0.88)';
-  ctx.fillRect(0,HDR_H+8,VW,VH-HDR_H-8-NAV_H);
+  ctx.fillRect(0,HDR_H,VW,VH-HDR_H-NAV_H);
   if(tab==='inventory') drawInventoryTab();
   else if(tab==='friends')   drawFriendsTab();
   else if(tab==='quests')    drawQuestsTab();
@@ -262,10 +287,10 @@ function drawTabScreen(tab){
 }
 
 function tabTitle(text){
-  ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fillRect(0,HDR_H+8,VW,44);
-  ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(0,HDR_H+52,VW,1);
+  ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fillRect(0,HDR_H,VW,44);
+  ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(0,HDR_H+44,VW,1);
   ctx.fillStyle='#FFF'; ctx.font='bold 17px sans-serif'; ctx.textAlign='center';
-  ctx.fillText(text,VW/2,HDR_H+36);
+  ctx.fillText(text,VW/2,HDR_H+28);
 }
 
 function drawInventoryTab(){
