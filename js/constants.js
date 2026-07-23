@@ -1,3 +1,4 @@
+// Internal game resolution (landscape) — ctx is rotated in portrait mode
 const VW=960, VH=540;
 const GY=VH*0.80;
 const PX=VW*0.16;
@@ -22,14 +23,45 @@ const BG_CONFIG={
     speeds:[0.02,0.03,0.07,0.12,0.22,0.32,0.48,0.70,1.10]
   },
 };
-const CORD  =['warrior','mage','archer','assasin','zhnec'];
+
+const CORD=['warrior','mage','archer','assasin','zhnec'];
+
+// Sprite metadata: f=frames, w=sheet width, h=frame height,
+// tx/ty=offset of trimmed region inside raw frame, tw/th=trimmed size
+const SPRITE_META={
+  assasin:{
+    idle:  {f:5,  w:480,  h:96,  tx:32, ty:29, tw:27, th:37},
+    run:   {f:8,  w:768,  h:96,  tx:33, ty:24, tw:31, th:42},
+    attack:{f:6,  w:576,  h:96,  tx:27, ty:21, tw:69, th:48},
+  },
+  mage:{
+    idle:  {f:5,  w:480,  h:64,  tx:37, ty:16, tw:31, th:35},
+    run:   {f:8,  w:768,  h:64,  tx:38, ty:15, tw:46, th:37},
+    attack:{f:7,  w:672,  h:64,  tx:37, ty:10, tw:58, th:52},
+  },
+  warrior:{
+    idle:  {f:5,  w:480,  h:64,  tx:37, ty:13, tw:21, th:35},
+    run:   {f:7,  w:672,  h:64,  tx:35, ty:15, tw:33, th:33},
+    attack:{f:5,  w:480,  h:64,  tx:30, ty:6,  tw:63, th:42},
+  },
+  archer:{
+    idle:  {f:14, w:1344, h:80,  tx:28, ty:24, tw:41, th:40},
+    run:   {f:8,  w:768,  h:80,  tx:32, ty:21, tw:32, th:43},
+    attack:{f:11, w:1056, h:80,  tx:30, ty:22, tw:66, th:42},
+  },
+  zhnec:{
+    idle:  {f:8,  w:768,  h:108, tx:0,  ty:44, tw:96, th:52},
+    run:   {f:8,  w:1024, h:108, tx:34, ty:49, tw:54, th:53},
+    attack:{f:8,  w:768,  h:108, tx:0,  ty:38, tw:96, th:63},
+  },
+};
 
 const CHAR={
-  warrior:{n:'Воин',    c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:2.30, idle:5, run:7, attack:5},
-  mage:   {n:'Маг',     c:'#3498DB', hp:4,  as:1.8, dm:2, sc:2.30, idle:5, run:8, attack:7},
-  archer: {n:'Лучник',  c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:1.82, idle:14,run:8, attack:11},
-  assasin:{n:'Ассасин', c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:1.52, idle:5, run:8, attack:6},
-  zhnec:  {n:'Рыцарь',  c:'#F39C12', hp:10, as:0.8, dm:4, sc:1.35, idle:8, run:8, attack:8},
+  warrior:{n:'Воин',    c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:2.30},
+  mage:   {n:'Маг',     c:'#3498DB', hp:4,  as:1.8, dm:2, sc:2.30},
+  archer: {n:'Лучник',  c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:1.82},
+  assasin:{n:'Ассасин', c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:1.52},
+  zhnec:  {n:'Рыцарь',  c:'#F39C12', hp:10, as:0.8, dm:4, sc:1.35},
 };
 
 const ET=[

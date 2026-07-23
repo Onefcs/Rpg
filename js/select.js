@@ -39,16 +39,16 @@ function drawCard(c,i){
   ctx.restore();
   const ad=imgs.ch[c].idle;
   const fw=ad.w/ad.f;
-  const sx=saf[i]*fw+(ad.tx||0), sy2=ad.ty||0, sw2=ad.tw||fw, sh2=ad.th||ad.h;
-  const sprH=CH*0.52, sprW=sw2*(sprH/sh2);
-  ctx.drawImage(ad.im,sx,sy2,sw2,sh2,x+(CW-sprW)/2,y+8,sprW,sprH);
+  const spSx=saf[i]*fw+(ad.tx||0), spSy=ad.ty||0, spSw=ad.tw||fw, spSh=ad.th||ad.h;
+  const sprH=CH*0.52, sprW=spSw*(sprH/spSh);
+  ctx.drawImage(ad.im,spSx,spSy,spSw,spSh,x+(CW-sprW)/2,y+8,sprW,sprH);
   ctx.fillStyle=sel?cfg.c:'#CCC';
   ctx.font=`bold ${sel?13:12}px sans-serif`; ctx.textAlign='center';
   ctx.fillText(cfg.n,x+CW/2,y+CH*0.70);
-  const sx=x+10, sw2=CW-20, sy=y+CH*0.75, sh2=5, g=10;
-  mBar(sx,sy,      sw2,sh2,cfg.hp/10,  '#E74C3C');
-  mBar(sx,sy+g,    sw2,sh2,cfg.as/2.5, '#F39C12');
-  mBar(sx,sy+g*2,  sw2,sh2,cfg.dm/5,   '#9B59B6');
+  const bx=x+10, bw=CW-20, by=y+CH*0.75, bh=5, g=10;
+  mBar(bx,by,      bw,bh,cfg.hp/10,  '#E74C3C');
+  mBar(bx,by+g,    bw,bh,cfg.as/2.5, '#F39C12');
+  mBar(bx,by+g*2,  bw,bh,cfg.dm/5,   '#9B59B6');
 }
 
 function mBar(x,y,w,h,p,col){

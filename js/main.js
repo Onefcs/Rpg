@@ -11,6 +11,8 @@ window.onload=()=>{
     );
   });
   load();
+  lastT=performance.now();
+  requestAnimationFrame(loop);
 };
 
 function resize(){
