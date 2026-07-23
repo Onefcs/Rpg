@@ -19,7 +19,7 @@ function resize(){
   const sw=window.innerWidth, sh=window.innerHeight;
   const dpr=Math.min(window.devicePixelRatio||1, 3);
   isPortrait=sh>sw;
-  dsc=Math.min(sw/VW, sh/VH);
+  dsc=Math.max(sw/VW, sh/VH);
   canvas.width=Math.round(VW*dpr);
   canvas.height=Math.round(VH*dpr);
   ctx.setTransform(dpr,0,0,dpr,0,0);
