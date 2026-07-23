@@ -6,3 +6,5 @@ let pl, en, pt;
 let bgO, curBG, bgCT, gspd, wave, sc, spT, dst;
 let selC='warrior', saf, sat;
 let goT=0;
+let xp=0, gold=100, plLv=1, navTab='game';
+let totalKills=0, gamesPlayed=0, bestScore=0, bestWave=1;

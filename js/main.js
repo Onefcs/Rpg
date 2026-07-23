@@ -32,10 +32,15 @@ function loop(t){
   requestAnimationFrame(loop);
   const dt=Math.min(t-lastT,50); lastT=t;
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(ST==='LOADING')      drawLoad();
-  else if(ST==='SELECT')  {updSel(dt);drawSel();}
+  if(ST==='LOADING'){ drawLoad(); return; }
+  if(navTab!=='game'){
+    drawBG();
+    drawTabScreen(navTab);
+  } else if(ST==='SELECT') {updSel(dt);drawSel();}
   else if(ST==='PLAY')    {updGame(dt);drawGame();}
   else                     drawOver(dt);
+  drawHeader();
+  drawNav();
 }
 
 function drawLoad(){

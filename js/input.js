@@ -2,6 +2,11 @@ function tap(cx,cy){
   const r=canvas.getBoundingClientRect();
   const tx=(cx-r.left)/dsc;
   const ty=(cy-r.top)/dsc;
+  if(ty>VH-NAV_H){
+    const ti=Math.floor(tx/(VW/NAV_TABS.length));
+    if(ti>=0&&ti<NAV_TABS.length){navTab=NAV_TABS[ti];return;}
+  }
+  if(navTab!=='game') return;
   if(ST==='SELECT'){
     let hit=null;
     CORD.forEach((c,i)=>{

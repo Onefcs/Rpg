@@ -31,25 +31,26 @@ function drawSel(){
   ov.addColorStop(1,'rgba(4,4,18,0.90)');
   ctx.fillStyle=ov; ctx.fillRect(0,0,VW,VH);
 
-  // Title
+  // Title (offset below header)
+  const yo=HDR_H+8;
   ctx.save(); ctx.textAlign='center';
   ctx.shadowBlur=32; ctx.shadowColor='#F39C12';
-  ctx.font='bold 46px sans-serif'; ctx.fillStyle='#FFFFFF';
-  ctx.fillText('HERO',VW/2,62);
+  ctx.font='bold 42px sans-serif'; ctx.fillStyle='#FFFFFF';
+  ctx.fillText('HERO',VW/2,yo+28);
   ctx.fillStyle='#F39C12';
-  ctx.fillText('RUNNER',VW/2,108);
+  ctx.fillText('RUNNER',VW/2,yo+70);
   ctx.shadowBlur=0;
 
   // Decorative divider
   const lw=90;
   ctx.strokeStyle='rgba(243,156,18,0.50)'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(VW/2-lw,122); ctx.lineTo(VW/2-24,122); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(VW/2+24,122); ctx.lineTo(VW/2+lw,122); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(VW/2-lw,yo+84); ctx.lineTo(VW/2-24,yo+84); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(VW/2+24,yo+84); ctx.lineTo(VW/2+lw,yo+84); ctx.stroke();
   ctx.fillStyle='#F39C12'; ctx.font='8px sans-serif';
-  ctx.fillText('✦', VW/2, 125);
+  ctx.fillText('✦', VW/2, yo+87);
 
   ctx.font='13px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.60)';
-  ctx.fillText('Выберите своего героя',VW/2,142);
+  ctx.fillText('Выберите своего героя',VW/2,yo+106);
   ctx.restore();
 
   CORD.forEach((c,i)=>drawCard(c,i));

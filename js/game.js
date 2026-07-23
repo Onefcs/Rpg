@@ -1,4 +1,5 @@
 function startGame(){
+  navTab='game';
   const cfg=CHAR[selC];
   pl={char:selC,cfg,state:'run',fr:0,ft:0,hp:cfg.hp,mhp:cfg.hp,al:false,ht:0};
   en=[]; pt=[]; curBG=0; bgCT=0;
@@ -8,11 +9,11 @@ function startGame(){
 }
 
 function updGame(dt){
-  if(pl.hp<=0){ST='GAMEOVER';goT=0;return;}
+  if(pl.hp<=0){if(sc>bestScore)bestScore=sc;gamesPlayed++;ST='GAMEOVER';goT=0;return;}
   const bgCfg=BG_CONFIG[BGS[curBG]];
   if(pl.state==='run') bgO=bgO.map((o,i)=>(o+bgCfg.speeds[i]*gspd*dt/16)%VW);
   bgCT+=dt; if(bgCT>45000){bgCT=0;curBG=(curBG+1)%BGS.length;bgO=Array(4).fill(0);}
-  dst+=dt; if(dst>8000){dst=0;gspd=Math.min(gspd+0.28,13);wave++;}
+  dst+=dt; if(dst>8000){dst=0;gspd=Math.min(gspd+0.28,13);wave++;if(wave>bestWave)bestWave=wave;}
   spT-=dt; if(spT<=0){spawn();spT=Math.max(1100,3400-wave*140)+Math.random()*700;}
 
   const nr=en.filter(e=>e.hp>0&&e.x>PX-30).sort((a,b)=>a.x-b.x)[0];
@@ -39,7 +40,7 @@ function updGame(dt){
         nr.hp-=d;
         dmg(nr.x,GY-nr.s*VH*0.19,crit?'⚡'+d:String(d),crit?'#FFD700':'#FFF');
         sparks(nr.x,GY-nr.s*VH*0.14);
-        if(nr.hp<=0){sc+=nr.xp;nr.dt=0;}
+        if(nr.hp<=0){sc+=nr.xp;xp+=nr.xp*2;gold+=Math.ceil(nr.xp*1.5);totalKills++;nr.dt=0;checkLv();}
       }
     }
     pl.fr++;
@@ -67,6 +68,10 @@ function spawn(){
   for(let i=0;i<wt.length;i++){r-=wt[i];if(r<=0){tp=i;break;}}
   const et=ET[tp], hp2=et.hp+wave;
   en.push({x:VW+60,tp,hp:hp2,mhp:hp2,v:et.v,s:et.s,xp:et.xp+Math.floor(wave/3)});
+}
+
+function checkLv(){
+  while(plLv<XP_TO_LV.length&&xp>=XP_TO_LV[plLv]) plLv++;
 }
 
 function dmg(x,y,txt,col){
