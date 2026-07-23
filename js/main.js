@@ -17,9 +17,12 @@ window.onload=()=>{
 
 function resize(){
   const sw=window.innerWidth, sh=window.innerHeight;
+  const dpr=Math.min(window.devicePixelRatio||1, 3);
   isPortrait=sh>sw;
   dsc=Math.min(sw/VW, sh/VH);
-  canvas.width=VW; canvas.height=VH;
+  canvas.width=Math.round(VW*dpr);
+  canvas.height=Math.round(VH*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
   const dw=VW*dsc, dh=VH*dsc;
   Object.assign(canvas.style,{
     width:dw+'px', height:dh+'px', position:'absolute',
@@ -31,7 +34,9 @@ function resize(){
 function loop(t){
   requestAnimationFrame(loop);
   const dt=Math.min(t-lastT,50); lastT=t;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const dpr=Math.min(window.devicePixelRatio||1,3);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,VW,VH);
   if(ST==='LOADING'){ drawLoad(); return; }
   if(navTab!=='game'){
     drawBG();
