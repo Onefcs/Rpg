@@ -10,7 +10,7 @@ function startGame(){
 function updGame(dt){
   if(pl.hp<=0){ST='GAMEOVER';goT=0;return;}
   const bgCfg=BG_CONFIG[BGS[curBG]];
-  bgO=bgO.map((o,i)=>(o+bgCfg.speeds[i]*gspd*dt/16)%VW);
+  if(pl.state==='run') bgO=bgO.map((o,i)=>(o+bgCfg.speeds[i]*gspd*dt/16)%VW);
   bgCT+=dt; if(bgCT>45000){bgCT=0;curBG=(curBG+1)%BGS.length;bgO=Array(4).fill(0);}
   dst+=dt; if(dst>8000){dst=0;gspd=Math.min(gspd+0.28,13);wave++;}
   spT-=dt; if(spT<=0){spawn();spT=Math.max(1100,3400-wave*140)+Math.random()*700;}
