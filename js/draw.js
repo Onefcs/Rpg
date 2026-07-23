@@ -11,15 +11,7 @@ function drawGame(){
 }
 
 function drawBG(){
-  const bk=BGS[curBG];
-  const cfg=BG_CONFIG[bk];
-  cfg.layers.forEach((layer,i)=>{
-    const im=imgs.bg[bk][layer];
-    if(!im||!im.complete) return;
-    const off=bgO[i];
-    ctx.drawImage(im,-off,0,VW,VH);
-    if(off>0) ctx.drawImage(im,VW-off,0,VW,VH);
-  });
+  BG_FN[BGS[curBG]](bgO);
 }
 
 function drawPlayer(){

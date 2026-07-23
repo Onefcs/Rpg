@@ -1,14 +1,5 @@
 function load(){
-  const bgLayerCount=BGS.reduce((s,bg)=>s+BG_CONFIG[bg].layers.length,0);
-  tot=bgLayerCount+CORD.length*3;
-  BGS.forEach(bg=>{
-    imgs.bg[bg]={};
-    BG_CONFIG[bg].layers.forEach(layer=>{
-      const im=new Image(); im.onload=onl;
-      im.src=`assets/bg/${bg}/${layer}.png`;
-      imgs.bg[bg][layer]=im;
-    });
-  });
+  tot=CORD.length*3;
   CORD.forEach(c=>{
     imgs.ch[c]={};
     ['idle','run','attack'].forEach(a=>{
