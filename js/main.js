@@ -17,13 +17,15 @@ function resize(){
   const sw=window.innerWidth, sh=window.innerHeight;
   isPortrait=sh>sw;
   if(isPortrait){
-    dsc=Math.min(sh/VW,sw/VH);
-    canvas.width=VW; canvas.height=VH;
-    const dw=VW*dsc, dh=VH*dsc;
+    // Canvas is portrait-shaped (VH wide × VW tall), no CSS rotation needed.
+    // The draw loop rotates the ctx internally so game content appears upright.
+    dsc=Math.min(sw/VH, sh/VW);
+    canvas.width=VH; canvas.height=VW;
+    const dw=VH*dsc, dh=VW*dsc;
     Object.assign(canvas.style,{
       width:dw+'px', height:dh+'px', position:'absolute',
       left:(sw-dw)/2+'px', top:(sh-dh)/2+'px',
-      transform:'rotate(90deg)', transformOrigin:'center'
+      transform:'', transformOrigin:''
     });
   }else{
     dsc=Math.min(sw/VW,sh/VH);
@@ -40,11 +42,15 @@ function resize(){
 function loop(t){
   requestAnimationFrame(loop);
   const dt=Math.min(t-lastT,50); lastT=t;
-  ctx.clearRect(0,0,VW,VH);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // In portrait the canvas is 540×960. Rotate context so the landscape
+  // game (960×540) draws upright filling the portrait canvas.
+  if(isPortrait){ctx.save();ctx.translate(0,VW);ctx.rotate(-Math.PI/2);}
   if(ST==='LOADING')      drawLoad();
   else if(ST==='SELECT')  {updSel(dt);drawSel();}
   else if(ST==='PLAY')    {updGame(dt);drawGame();}
   else                     drawOver(dt);
+  if(isPortrait) ctx.restore();
 }
 
 function drawLoad(){

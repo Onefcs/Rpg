@@ -2,8 +2,12 @@ function tap(cx,cy){
   const r=canvas.getBoundingClientRect();
   let tx, ty;
   if(isPortrait){
-    const dx=cx-r.left, dy=cy-r.top;
-    tx=dy/dsc; ty=(r.width-dx)/dsc;
+    // Canvas is portrait (VH×VW = 540×960), drawn via ctx.translate(0,VW)+rotate(-90°).
+    // Inverse transform: portrait canvas pixel (px,py) → landscape game (tx,ty):
+    //   tx = VW - py,  ty = px
+    const px=(cx-r.left)/dsc;
+    const py=(cy-r.top)/dsc;
+    tx=VW-py; ty=px;
   }else{
     tx=(cx-r.left)/dsc; ty=(cy-r.top)/dsc;
   }
