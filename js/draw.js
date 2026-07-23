@@ -43,7 +43,7 @@ function drawPlayer(){
 
 function drawEnemy(e){
   const et=ET[e.tp];
-  const bh=VH*0.155, h=bh*e.s, w=h*0.68, cx=e.x;
+  const bh=84, h=bh*e.s, w=h*0.68, cx=e.x;
   const dead=e.hp<=0, al=dead?Math.max(0,1-(e.dt||0)/600):1;
   const bob=dead?0:Math.sin(Date.now()/180+e.x*0.05)*2.5;
   ctx.save(); ctx.globalAlpha=al;

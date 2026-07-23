@@ -1,7 +1,7 @@
-// Internal game resolution (landscape) — ctx is rotated in portrait mode
-const VW=960, VH=540;
-const GY=VH*0.80;
-const PX=VW*0.16;
+// Portrait-native internal resolution (9:16)
+const VW=540, VH=960;
+const GY=VH*0.84;
+const PX=VW*0.18;
 
 const BGS=['BG_01','BG_02','BG_03','BG_04'];
 
@@ -57,11 +57,11 @@ const SPRITE_META={
 };
 
 const CHAR={
-  warrior:{n:'Воин',    c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:2.30},
-  mage:   {n:'Маг',     c:'#3498DB', hp:4,  as:1.8, dm:2, sc:2.30},
-  archer: {n:'Лучник',  c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:1.82},
-  assasin:{n:'Ассасин', c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:1.52},
-  zhnec:  {n:'Рыцарь',  c:'#F39C12', hp:10, as:0.8, dm:4, sc:1.35},
+  warrior:{n:'Воин',    c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:3.45},
+  mage:   {n:'Маг',     c:'#3498DB', hp:4,  as:1.8, dm:2, sc:3.45},
+  archer: {n:'Лучник',  c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:2.75},
+  assasin:{n:'Ассасин', c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:2.30},
+  zhnec:  {n:'Рыцарь',  c:'#F39C12', hp:10, as:0.8, dm:4, sc:2.00},
 };
 
 const ET=[
@@ -71,6 +71,6 @@ const ET=[
   {n:'Демон',  hp:28, c:'#0D0D0D', e:'#FF4500', s:1.55, v:0.6, xp:15},
 ];
 
-const CW=158, CH=228, CG=14;
+const CW=88, CH=128, CG=8;
 const CX0=(VW-(CORD.length*(CW+CG)-CG))/2;
-const CY=128;
+const CY=185;
