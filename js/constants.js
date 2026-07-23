@@ -57,11 +57,11 @@ const SPRITE_META={
 };
 
 const CHAR={
-  warrior:{n:'Воин',    c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:3.45},
-  mage:   {n:'Маг',     c:'#3498DB', hp:4,  as:1.8, dm:2, sc:3.45},
-  archer: {n:'Лучник',  c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:2.75},
-  assasin:{n:'Ассасин', c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:2.30},
-  zhnec:  {n:'Рыцарь',  c:'#F39C12', hp:10, as:0.8, dm:4, sc:2.00},
+  warrior:{n:'Воин',    c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:2.40},
+  mage:   {n:'Маг',     c:'#3498DB', hp:4,  as:1.8, dm:2, sc:2.40},
+  archer: {n:'Лучник',  c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:1.90},
+  assasin:{n:'Ассасин', c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:1.65},
+  zhnec:  {n:'Рыцарь',  c:'#F39C12', hp:10, as:0.8, dm:4, sc:1.45},
 };
 
 const ET=[
@@ -71,6 +71,6 @@ const ET=[
   {n:'Демон',  hp:28, c:'#0D0D0D', e:'#FF4500', s:1.55, v:0.6, xp:15},
 ];
 
-const CW=88, CH=128, CG=8;
+const CW=90, CH=148, CG=7;
 const CX0=(VW-(CORD.length*(CW+CG)-CG))/2;
-const CY=185;
+const CY=195;
