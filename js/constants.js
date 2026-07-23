@@ -2,9 +2,26 @@ const VW=960, VH=540;
 const GY=VH*0.80;
 const PX=VW*0.16;
 
-const LAYERS=['Sky','BG_Decor','Middle_Decor','Ground_02','Ground_01','Foreground'];
-const LSPD  =[0.04, 0.12,    0.25,          0.45,       0.72,      1.10];
-const BGS   =['BG_01','BG_02','BG_03','BG_04'];
+const BGS=['BG_01','BG_02','BG_03','BG_04'];
+
+const BG_CONFIG={
+  BG_01:{
+    layers:['sky','mountains_bg','clouds','mountains_fg','fog','dust','ground','cactus'],
+    speeds:[0.02,0.05,0.10,0.20,0.32,0.55,0.85,1.10]
+  },
+  BG_02:{
+    layers:['sky','stars','mountains_bg','clouds_bg','mountains_mg','mountains_fg','tree','clouds_fg','ground'],
+    speeds:[0.02,0.03,0.06,0.10,0.18,0.28,0.45,0.68,1.10]
+  },
+  BG_03:{
+    layers:['sky','clouds_bg','mountain','forest_and_mountains','clouds_fg','fog','tree','forest_fg','ground'],
+    speeds:[0.02,0.06,0.10,0.16,0.24,0.34,0.50,0.75,1.10]
+  },
+  BG_04:{
+    layers:['sky','sun','clouds_bg','mountains_bg','mountains_mg','fog','mountains_fg','cloud_fg','ground'],
+    speeds:[0.02,0.03,0.07,0.12,0.22,0.32,0.48,0.70,1.10]
+  },
+};
 const CORD  =['warrior','mage','archer','assasin','zhnec'];
 
 const CHAR={

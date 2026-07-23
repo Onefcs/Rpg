@@ -1,15 +1,17 @@
 function startGame(){
   const cfg=CHAR[selC];
   pl={char:selC,cfg,state:'run',fr:0,ft:0,hp:cfg.hp,mhp:cfg.hp,al:false,ht:0};
-  en=[]; pt=[]; bgO=Array(6).fill(0); curBG=0; bgCT=0;
+  en=[]; pt=[]; curBG=0; bgCT=0;
+  bgO=Array(BG_CONFIG[BGS[0]].layers.length).fill(0);
   gspd=3.5; wave=1; sc=0; spT=2500; dst=0;
   ST='PLAY';
 }
 
 function updGame(dt){
   if(pl.hp<=0){ST='GAMEOVER';goT=0;return;}
-  bgO=bgO.map((o,i)=>(o+LSPD[i]*gspd*dt/16)%VW);
-  bgCT+=dt; if(bgCT>45000){bgCT=0;curBG=(curBG+1)%BGS.length;}
+  const bgCfg=BG_CONFIG[BGS[curBG]];
+  bgO=bgO.map((o,i)=>(o+bgCfg.speeds[i]*gspd*dt/16)%VW);
+  bgCT+=dt; if(bgCT>45000){bgCT=0;curBG=(curBG+1)%BGS.length;bgO=Array(BG_CONFIG[BGS[curBG]].layers.length).fill(0);}
   dst+=dt; if(dst>8000){dst=0;gspd=Math.min(gspd+0.28,13);wave++;}
   spT-=dt; if(spT<=0){spawn();spT=Math.max(1100,3400-wave*140)+Math.random()*700;}
 

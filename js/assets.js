@@ -1,8 +1,9 @@
 function load(){
-  tot=BGS.length*LAYERS.length+CORD.length*3;
+  const bgLayerCount=BGS.reduce((s,bg)=>s+BG_CONFIG[bg].layers.length,0);
+  tot=bgLayerCount+CORD.length*3;
   BGS.forEach(bg=>{
     imgs.bg[bg]={};
-    LAYERS.forEach(layer=>{
+    BG_CONFIG[bg].layers.forEach(layer=>{
       const im=new Image(); im.onload=onl;
       im.src=`assets/bg/${bg}/${layer}.png`;
       imgs.bg[bg][layer]=im;
@@ -16,7 +17,8 @@ function load(){
         ['idle','run','attack'].forEach(a=>{
           const d=meta[c][a], im=new Image(); im.onload=onl;
           im.src=`assets/chars/${c}/${a}.png`;
-          imgs.ch[c][a]={im, f:d.f, w:d.w, h:d.h};
+          // tw/th = trimmed frame size; tx/ty = offset inside raw frame
+          imgs.ch[c][a]={im, f:d.f, w:d.w, h:d.h, tw:d.tw, th:d.th, tx:d.tx, ty:d.ty};
         });
       });
     });

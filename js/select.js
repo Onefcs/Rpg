@@ -1,13 +1,14 @@
 function initSel(){
   saf=Array(5).fill(0); sat=0;
-  bgO=Array(6).fill(0); curBG=0; bgCT=0;
+  curBG=0; bgCT=0; bgO=Array(BG_CONFIG[BGS[0]].layers.length).fill(0);
 }
 
 function updSel(dt){
   sat+=dt;
   if(sat>110){sat=0;CORD.forEach((c,i)=>{saf[i]=(saf[i]+1)%imgs.ch[c].idle.f;});}
-  bgO=bgO.map((o,i)=>(o+LSPD[i]*1.8)%VW);
-  bgCT+=dt; if(bgCT>40000){bgCT=0;curBG=(curBG+1)%BGS.length;}
+  const bgCfg=BG_CONFIG[BGS[curBG]];
+  bgO=bgO.map((o,i)=>(o+bgCfg.speeds[i]*1.8)%VW);
+  bgCT+=dt; if(bgCT>40000){bgCT=0;curBG=(curBG+1)%BGS.length;bgO=Array(BG_CONFIG[BGS[curBG]].layers.length).fill(0);}
 }
 
 function drawSel(){
@@ -37,8 +38,10 @@ function drawCard(c,i){
   ctx.lineWidth=sel?2:1; rR(x,y,CW,CH,10); ctx.stroke();
   ctx.restore();
   const ad=imgs.ch[c].idle;
-  const fw=ad.w/ad.f, fh=ad.h, sprH=CH*0.52, sprW=fw*(sprH/fh);
-  ctx.drawImage(ad.im,saf[i]*fw,0,fw,fh,x+(CW-sprW)/2,y+8,sprW,sprH);
+  const fw=ad.w/ad.f;
+  const sx=saf[i]*fw+(ad.tx||0), sy2=ad.ty||0, sw2=ad.tw||fw, sh2=ad.th||ad.h;
+  const sprH=CH*0.52, sprW=sw2*(sprH/sh2);
+  ctx.drawImage(ad.im,sx,sy2,sw2,sh2,x+(CW-sprW)/2,y+8,sprW,sprH);
   ctx.fillStyle=sel?cfg.c:'#CCC';
   ctx.font=`bold ${sel?13:12}px sans-serif`; ctx.textAlign='center';
   ctx.fillText(cfg.n,x+CW/2,y+CH*0.70);

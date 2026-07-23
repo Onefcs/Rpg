@@ -9,7 +9,8 @@ function drawGame(){
 
 function drawBG(){
   const bk=BGS[curBG];
-  LAYERS.forEach((layer,i)=>{
+  const cfg=BG_CONFIG[bk];
+  cfg.layers.forEach((layer,i)=>{
     const im=imgs.bg[bk][layer];
     if(!im||!im.complete) return;
     const off=bgO[i];
@@ -22,17 +23,21 @@ function drawPlayer(){
   const ad=imgs.ch[pl.char][pl.state];
   if(!ad||!ad.im.complete) return;
   const cfg=CHAR[pl.char];
-  const fw=ad.w/ad.f, fh=ad.h;
-  const dh=fh*cfg.sc, dw=fw*cfg.sc;
+  const fw=ad.w/ad.f;
+  // Use trimmed frame region to strip empty padding
+  const sx=pl.fr*fw+(ad.tx||0), sy=ad.ty||0;
+  const sw=ad.tw||fw,            sh=ad.th||ad.h;
+  const dh=sh*cfg.sc, dw=sw*cfg.sc;
+  const dx=PX-dw*0.5, dy=GY-dh;
   if(pl.ht>0&&Math.floor(pl.ht/65)%2===0){
     ctx.save();
     ctx.globalAlpha=0.3;
-    ctx.drawImage(ad.im,pl.fr*fw,0,fw,fh,PX-dw*0.3,GY-dh,dw,dh);
+    ctx.drawImage(ad.im,sx,sy,sw,sh,dx,dy,dw,dh);
     ctx.globalAlpha=1;
-    ctx.fillStyle='rgba(255,0,0,0.25)'; ctx.fillRect(PX-dw*0.3,GY-dh,dw,dh);
+    ctx.fillStyle='rgba(255,0,0,0.25)'; ctx.fillRect(dx,dy,dw,dh);
     ctx.restore();
   }else{
-    ctx.drawImage(ad.im,pl.fr*fw,0,fw,fh,PX-dw*0.3,GY-dh,dw,dh);
+    ctx.drawImage(ad.im,sx,sy,sw,sh,dx,dy,dw,dh);
   }
 }
 
