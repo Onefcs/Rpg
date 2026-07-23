@@ -1,0 +1,11 @@
+*{margin:0;padding:0;box-sizing:border-box;touch-action:none;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#08080F;user-select:none}
+canvas{display:block;image-rendering:auto}
+#rot{
+  display:none;position:fixed;inset:0;background:#08080F;color:#FFF;
+  flex-direction:column;align-items:center;justify-content:center;
+  font:bold 22px sans-serif;text-align:center;z-index:9;gap:14px
+}
+#rot span{font-size:48px}
+#rot p{font-size:14px;opacity:0.6;margin-top:4px}
+@media(orientation:landscape){#rot{display:flex}canvas{display:none}}
