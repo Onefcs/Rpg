@@ -6,6 +6,15 @@ function tap(cx,cy){
     const ti=Math.floor(tx/(VW/NAV_TABS.length));
     if(ti>=0&&ti<NAV_TABS.length){navTab=NAV_TABS[ti];return;}
   }
+  if(navTab==='map'){
+    const unlockAt=[0,10,50,200];
+    const cardH=152, cardGap=8, startY=HDR_H+56;
+    LOCATIONS.forEach((loc,i)=>{
+      const cy=startY+i*(cardH+cardGap);
+      if(ty>=cy&&ty<=cy+cardH&&tx>=10&&tx<=VW-10&&totalKills>=unlockAt[i]) curLoc=i;
+    });
+    return;
+  }
   if(navTab!=='game') return;
   if(ST==='SELECT'){
     let hit=null;

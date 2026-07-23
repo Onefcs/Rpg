@@ -138,15 +138,15 @@ function drawHUD(){
   const scW=ctx.measureText(scTxt).width+20;
   rR(10,y0,scW,30,15); ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fill();
   ctx.fillStyle='#F39C12'; ctx.fillText(scTxt,20,y0+22);
-  // Wave pill (right)
-  const wvTxt='Волна '+wave;
-  ctx.font='bold 13px sans-serif'; ctx.textAlign='right';
-  const wvW=ctx.measureText(wvTxt).width+20;
+  // Location pill (right)
+  const loc=LOCATIONS[curLoc];
+  const locTxt=loc.icon+' '+'★'.repeat(loc.tier);
+  ctx.font='bold 15px sans-serif'; ctx.textAlign='right';
+  const wvW=ctx.measureText(locTxt).width+20;
   rR(VW-10-wvW,y0,wvW,30,15); ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fill();
-  ctx.fillStyle='#FFFFFF'; ctx.fillText(wvTxt,VW-10,y0+22);
-  // Speed tag
-  ctx.font='11px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.50)';
-  ctx.fillText('×'+(gspd/3.5).toFixed(1),VW-10,y0+40);
+  ctx.fillStyle='#FFFFFF'; ctx.fillText(locTxt,VW-10,y0+22);
+  ctx.font='10px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.45)';
+  ctx.fillText(loc.n,VW-10,y0+40);
 }
 
 function heart(cx,cy,s,filled){
@@ -383,42 +383,71 @@ function drawCharacterTab(){
 }
 
 function drawMapTab(){
-  tabTitle('КАРТА');
-  const mapX=12, mapY=HDR_H+56, mapW=VW-24, mapH=226;
-  // Map panel
-  rR(mapX,mapY,mapW,mapH,10);
-  ctx.fillStyle='#0D1F12'; ctx.fill();
-  ctx.strokeStyle='rgba(46,204,113,0.18)'; ctx.lineWidth=1; ctx.stroke();
-  // Grid
-  ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
-  for(let i=1;i<5;i++){ctx.beginPath();ctx.moveTo(mapX,mapY+i*45);ctx.lineTo(mapX+mapW,mapY+i*45);ctx.stroke();}
-  for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(mapX+i*(mapW/6),mapY);ctx.lineTo(mapX+i*(mapW/6),mapY+mapH);ctx.stroke();}
-  ctx.restore();
-  // Enemy markers
-  [[0.22,0.33,'#E74C3C'],[0.72,0.62,'#E74C3C'],[0.52,0.22,'#9B59B6']].forEach(([rx,ry,mc])=>{
-    const ex=mapX+mapW*rx, ey=mapY+mapH*ry;
-    ctx.fillStyle=mc+'99'; ctx.beginPath(); ctx.arc(ex,ey,6,0,Math.PI*2); ctx.fill();
-    ctx.strokeStyle=mc; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(ex,ey,6,0,Math.PI*2); ctx.stroke();
-    ctx.font='10px sans-serif'; ctx.fillStyle='#FFF'; ctx.textAlign='center';
-    ctx.fillText('!',ex,ey+4);
-  });
-  // Player pin + pulse
-  const px=VW/2, py=mapY+mapH*0.52;
-  const t=(Date.now()/800)%1;
-  ctx.save(); ctx.globalAlpha=0.5*(1-t);
-  ctx.strokeStyle='#F39C12'; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.arc(px,py,10+t*24,0,Math.PI*2); ctx.stroke();
-  ctx.restore();
-  ctx.fillStyle='#F39C12'; ctx.beginPath(); ctx.arc(px,py,9,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='#0F1120'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
-  ctx.fillText('★',px,py+4);
+  tabTitle('ЛОКАЦИИ');
+  const unlockAt=[0,10,50,200];
+  const tierColors=['#2ECC71','#3498DB','#E74C3C','#9B59B6'];
+  const cardX=10, cardW=VW-20, cardH=152, cardGap=8;
+  const startY=HDR_H+56;
 
-  // Stats below map
-  const sy=mapY+mapH+18;
-  ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
-  ctx.fillText('Текущая локация', VW/2, sy);
-  ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font='12px sans-serif';
-  ctx.fillText('Лучшая волна '+bestWave+'  ·  Игр сыграно '+gamesPlayed, VW/2, sy+22);
+  LOCATIONS.forEach((loc,i)=>{
+    const cy=startY+i*(cardH+cardGap);
+    const active=curLoc===i;
+    const unlocked=totalKills>=unlockAt[i];
+
+    rR(cardX,cy,cardW,cardH,10);
+    ctx.fillStyle=active?'#1E2240':(unlocked?'#151728':'#0D0E1A'); ctx.fill();
+    ctx.strokeStyle=active?'#F39C12':(unlocked?'rgba(255,255,255,0.09)':'rgba(255,255,255,0.04)');
+    ctx.lineWidth=active?2:1; ctx.stroke();
+
+    // Left color bar
+    ctx.fillStyle=unlocked?tierColors[i]+'CC':'#2A2A2A';
+    ctx.beginPath(); ctx.roundRect(cardX,cy,4,cardH,{upperLeft:10,lowerLeft:10}); ctx.fill();
+
+    ctx.globalAlpha=unlocked?1:0.28;
+
+    // Icon
+    ctx.font='30px sans-serif'; ctx.textAlign='left';
+    ctx.fillText(loc.icon, cardX+16, cy+48);
+
+    // Name
+    ctx.fillStyle=active?'#FFFFFF':'rgba(255,255,255,0.82)';
+    ctx.font=(active?'bold ':'')+'15px sans-serif';
+    ctx.fillText(loc.n, cardX+60, cy+30);
+
+    // Stars
+    ctx.fillStyle='#F39C12'; ctx.font='13px sans-serif';
+    ctx.fillText('★'.repeat(loc.tier)+'☆'.repeat(4-loc.tier), cardX+60, cy+50);
+
+    // Enemies
+    const minT=Math.max(0,i-1), maxT=Math.min(ET.length-1,i);
+    const enemies=ET.slice(minT,maxT+1).map(e=>e.n).join(', ');
+    ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='11px sans-serif';
+    ctx.fillText(enemies, cardX+60, cy+70);
+
+    // Multipliers
+    ctx.fillStyle='rgba(255,255,255,0.32)'; ctx.font='11px sans-serif';
+    ctx.fillText('HP ×'+loc.hpMult+'  XP ×'+loc.xpMult+'  Скор. ×'+(loc.spd/3.5).toFixed(1), cardX+60, cy+90);
+
+    ctx.globalAlpha=1;
+
+    if(!unlocked){
+      ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.font='bold 11px sans-serif'; ctx.textAlign='right';
+      ctx.fillText('🔒 '+unlockAt[i]+' убийств', cardX+cardW-14, cy+cardH-18);
+    } else if(active){
+      rR(cardX+cardW-86,cy+cardH-38,74,26,13);
+      ctx.fillStyle='#F39C12'; ctx.fill();
+      ctx.fillStyle='#0F1120'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('✓ АКТИВНА', cardX+cardW-86+37, cy+cardH-19);
+    } else {
+      rR(cardX+cardW-86,cy+cardH-38,74,26,13);
+      ctx.fillStyle='rgba(255,255,255,0.06)'; ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.20)'; ctx.lineWidth=1; ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('ВЫБРАТЬ', cardX+cardW-86+37, cy+cardH-19);
+    }
+
+    ctx.textAlign='left';
+  });
 }
 
 function drawQuestsTab(){
