@@ -45,11 +45,11 @@ const SPRITE_META={
 };
 
 const CHAR={
-  warrior:{n:'Воин',    c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:2.40},
-  mage:   {n:'Маг',     c:'#3498DB', hp:4,  as:1.8, dm:2, sc:2.40},
-  archer: {n:'Лучник',  c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:1.90},
-  assasin:{n:'Ассасин', c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:1.65},
-  zhnec:  {n:'Рыцарь',  c:'#F39C12', hp:10, as:0.8, dm:4, sc:1.45},
+  warrior:{n:'Воин',    cl:'Ближний бой', c:'#E74C3C', hp:8,  as:1.0, dm:3, sc:2.40},
+  mage:   {n:'Маг',     cl:'Магия',       c:'#3498DB', hp:4,  as:1.8, dm:2, sc:2.40},
+  archer: {n:'Лучник',  cl:'Стрелок',     c:'#2ECC71', hp:6,  as:1.4, dm:2, sc:1.90},
+  assasin:{n:'Ассасин', cl:'Скрытность',  c:'#9B59B6', hp:5,  as:2.0, dm:2, sc:1.65},
+  zhnec:  {n:'Рыцарь',  cl:'Защита',      c:'#F39C12', hp:10, as:0.8, dm:4, sc:1.45},
 };
 
 const ET=[
@@ -64,7 +64,7 @@ const CX0=(VW-(CORD.length*(CW+CG)-CG))/2;
 const CY=210;
 
 const HDR_H=82, NAV_H=72;
-const NAV_TABS=['game','inventory','friends','quests','profile'];
-const NAV_LABELS=['Игра','Инвент.','Друзья','Задания','Профиль'];
-const NAV_ICONS=['⚔','🎒','👥','📜','👤'];
+const NAV_TABS=['game','character','map','quests','profile'];
+const NAV_LABELS=['Игра','Персонаж','Карта','Квесты','Профиль'];
+const NAV_ICONS=['game','character','map','quests','profile'];
 const XP_TO_LV=[0,40,100,200,350,560,840,1200,1700,2400];

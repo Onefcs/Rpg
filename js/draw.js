@@ -183,96 +183,158 @@ function drawHeader(){
   const curHp=isPlay?pl.hp:cfg.hp;
   const maxHp=isPlay?pl.mhp:cfg.hp;
 
-  // Background panel
-  ctx.fillStyle='rgba(6,6,24,0.97)'; ctx.fillRect(0,0,VW,HDR_H);
-  ctx.fillStyle=cfg.c+'33'; ctx.fillRect(0,HDR_H-1,VW,1);
+  // Panel
+  ctx.fillStyle='rgba(8,10,30,0.97)'; ctx.fillRect(0,0,VW,HDR_H);
+  ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.fillRect(0,HDR_H-1,VW,1);
+  // Left colored accent strip
+  ctx.fillStyle=cfg.c; ctx.fillRect(0,0,3,HDR_H);
 
   // ── Circular avatar ──
-  const avR=20, avX=14+avR, avY=22;
+  const avR=18, avX=28, avY=22;
   const ad=imgs.ch[c].idle;
-  const fw=ad.w/ad.f, spSx=ad.tx||0, spSy=ad.ty||0;
+  const fw=ad.w/ad.f;
+  const spSx=ad.tx||0, spSy=ad.ty||0;
   const spSw=ad.tw||fw, spSh=ad.th||ad.h;
   ctx.save();
   ctx.beginPath(); ctx.arc(avX,avY,avR,0,Math.PI*2);
   ctx.fillStyle=cfg.c+'22'; ctx.fill(); ctx.clip();
-  const spSc=(avR*2*0.86)/Math.max(spSw,spSh);
+  const spSc=(avR*2*0.84)/Math.max(spSw,spSh);
   const sdw=spSw*spSc, sdh=spSh*spSc;
   ctx.imageSmoothingEnabled=true;
-  ctx.drawImage(ad.im,spSx,spSy,spSw,spSh, avX-sdw/2, avY-sdh*0.54, sdw, sdh);
+  ctx.drawImage(ad.im,spSx,spSy,spSw,spSh, avX-sdw/2, avY-sdh*0.52, sdw, sdh);
   ctx.restore();
-  ctx.save(); ctx.shadowColor=cfg.c; ctx.shadowBlur=9;
-  ctx.strokeStyle=cfg.c+'CC'; ctx.lineWidth=2;
+  ctx.save(); ctx.shadowColor=cfg.c; ctx.shadowBlur=8;
+  ctx.strokeStyle=cfg.c; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.arc(avX,avY,avR,0,Math.PI*2); ctx.stroke();
   ctx.restore();
 
-  // ── Name + level ──
+  // ── Name ──
   const nameX=avX+avR+10;
-  ctx.fillStyle='#FFF'; ctx.font='bold 15px sans-serif'; ctx.textAlign='left';
-  ctx.fillText(cfg.n, nameX, avY-2);
-  ctx.fillStyle=cfg.c+'CC'; ctx.font='11px sans-serif';
-  ctx.fillText('Ур. '+plLv, nameX, avY+14);
+  ctx.fillStyle='#FFFFFF'; ctx.font='bold 13px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(cfg.n, nameX, 19);
 
-  // ── Gold badge ──
-  ctx.save(); ctx.shadowColor='#FFD700'; ctx.shadowBlur=7;
-  ctx.fillStyle='#FFD700'; ctx.font='bold 13px sans-serif'; ctx.textAlign='right';
-  ctx.fillText('💰 '+gold, VW-10, avY+4);
-  ctx.restore();
+  // ── "Ур.N" orange pill badge (right-aligned, same row as name) ──
+  ctx.font='bold 10px sans-serif';
+  const lvTxt='Ур.'+plLv;
+  const lvTxtW=ctx.measureText(lvTxt).width;
+  const lvPad=8, lvH=17, lvW=lvTxtW+lvPad*2;
+  const lvX=VW-8-lvW, lvY=5;
+  rR(lvX,lvY,lvW,lvH,4);
+  ctx.fillStyle='rgba(243,156,18,0.18)'; ctx.fill();
+  ctx.strokeStyle='#F39C12'; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle='#F39C12'; ctx.textAlign='center';
+  ctx.fillText(lvTxt, lvX+lvW/2, lvY+12);
+
+  // ── Class + score + gold row ──
+  ctx.font='10px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.textAlign='left';
+  ctx.fillText(cfg.cl+'   ⚔ '+(isPlay?sc:0)+'   💰 '+gold, nameX, 34);
 
   // ── HP bar ──
-  const barX=12, barW=VW-24;
-  const hpY=avY+avR+7, hpH=11;
+  const barX=8, barW=VW-16, hpY=46, hpH=11;
   const hpPct=Math.max(0,Math.min(curHp/maxHp,1));
-  const hpCol=hpPct>0.55?'#2ECC71':hpPct>0.28?'#F39C12':'#E74C3C';
   ctx.fillStyle='rgba(255,255,255,0.07)'; rR(barX,hpY,barW,hpH,hpH/2); ctx.fill();
   if(hpPct>0){
     const hw=Math.max(barW*hpPct,hpH);
-    const hc=ctx.createLinearGradient(barX,0,barX+barW,0);
-    hc.addColorStop(0,hpCol+'AA'); hc.addColorStop(1,hpCol);
-    ctx.fillStyle=hc; rR(barX,hpY,hw,hpH,hpH/2); ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,0.18)'; rR(barX,hpY,hw,hpH*0.42,hpH/2); ctx.fill();
+    const hg=ctx.createLinearGradient(barX,0,barX+barW,0);
+    hg.addColorStop(0,'#D35400'); hg.addColorStop(1,'#F39C12');
+    ctx.fillStyle=hg; rR(barX,hpY,hw,hpH,hpH/2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.16)'; rR(barX,hpY,hw,hpH*0.4,hpH/2); ctx.fill();
   }
-  ctx.fillStyle='rgba(255,255,255,0.80)'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
-  ctx.fillText('❤  '+curHp+' / '+maxHp, barX+barW/2, hpY+hpH-1);
+  ctx.font='bold 8px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.88)';
+  ctx.textAlign='left';  ctx.fillText('HP', barX+5,  hpY+hpH-1);
+  ctx.textAlign='right'; ctx.fillText(curHp+'/'+maxHp, barX+barW-5, hpY+hpH-1);
 
   // ── XP bar ──
   const xpPrev=XP_TO_LV[plLv-1]||0;
   const xpNext=XP_TO_LV[plLv]||XP_TO_LV[XP_TO_LV.length-1];
   const xpCur=xp-xpPrev, xpRange=xpNext-xpPrev;
   const xpPct=xpRange>0?Math.min(xpCur/xpRange,1):1;
-  const xpY=hpY+hpH+5, xpH=9;
+  const xpY=hpY+hpH+4, xpH=9;
   ctx.fillStyle='rgba(255,255,255,0.05)'; rR(barX,xpY,barW,xpH,xpH/2); ctx.fill();
   if(xpPct>0){
     const xw=Math.max(barW*xpPct,xpH);
     const xg=ctx.createLinearGradient(barX,0,barX+barW,0);
-    xg.addColorStop(0,cfg.c+'77'); xg.addColorStop(1,cfg.c);
+    xg.addColorStop(0,'#5B21B6'); xg.addColorStop(1,'#A855F7');
     ctx.fillStyle=xg; rR(barX,xpY,xw,xpH,xpH/2); ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,0.15)'; rR(barX,xpY,xw,xpH*0.44,xpH/2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.14)'; rR(barX,xpY,xw,xpH*0.4,xpH/2); ctx.fill();
   }
-  ctx.fillStyle='rgba(255,255,255,0.48)'; ctx.font='7px sans-serif'; ctx.textAlign='center';
-  ctx.fillText('⭐ '+xpCur+' / '+xpRange+' XP → Лв.'+(plLv<XP_TO_LV.length?plLv+1:'MAX'), barX+barW/2, xpY+xpH-0.5);
+  ctx.font='bold 8px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.88)';
+  ctx.textAlign='left';  ctx.fillText('XP', barX+5,  xpY+xpH-1);
+  ctx.textAlign='right'; ctx.fillText(xpCur+'/'+xpRange, barX+barW-5, xpY+xpH-1);
+}
+
+// ─── NAV ICON (line-art canvas paths) ────────────────────────────────────────
+function navIcon(type,cx,cy,sz,col){
+  ctx.save();
+  ctx.strokeStyle=col; ctx.fillStyle=col;
+  ctx.lineWidth=1.6; ctx.lineCap='round'; ctx.lineJoin='round';
+  if(type==='game'){
+    // Sword: blade + crossguard + pommel
+    ctx.beginPath(); ctx.moveTo(cx,cy-sz*0.44); ctx.lineTo(cx,cy+sz*0.26); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-sz*0.24,cy-sz*0.08); ctx.lineTo(cx+sz*0.24,cy-sz*0.08); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy+sz*0.36,sz*0.10,0,Math.PI*2); ctx.fill();
+  } else if(type==='character'){
+    // Person: head circle + shoulder arc
+    ctx.beginPath(); ctx.arc(cx,cy-sz*0.24,sz*0.20,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx-sz*0.30,cy+sz*0.42);
+    ctx.quadraticCurveTo(cx-sz*0.30,cy+sz*0.04,cx,cy+sz*0.04);
+    ctx.quadraticCurveTo(cx+sz*0.30,cy+sz*0.04,cx+sz*0.30,cy+sz*0.42);
+    ctx.stroke();
+  } else if(type==='map'){
+    // Folded map with location pin
+    ctx.beginPath();
+    ctx.moveTo(cx-sz*0.32,cy-sz*0.36); ctx.lineTo(cx-sz*0.32,cy+sz*0.36);
+    ctx.lineTo(cx+sz*0.32,cy+sz*0.36); ctx.lineTo(cx+sz*0.32,cy-sz*0.36);
+    ctx.closePath(); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx-sz*0.04,cy-sz*0.36); ctx.lineTo(cx-sz*0.04,cy+sz*0.36);
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx+sz*0.14,cy-sz*0.06,sz*0.09,0,Math.PI*2); ctx.fill();
+  } else if(type==='quests'){
+    // Scroll with lines
+    const sw=sz*0.38, sh=sz*0.50;
+    rR(cx-sw,cy-sh,sw*2,sh*2,sz*0.08); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx-sz*0.20,cy-sz*0.12); ctx.lineTo(cx+sz*0.20,cy-sz*0.12);
+    ctx.moveTo(cx-sz*0.20,cy+sz*0.04); ctx.lineTo(cx+sz*0.14,cy+sz*0.04);
+    ctx.moveTo(cx-sz*0.20,cy+sz*0.20); ctx.lineTo(cx+sz*0.06,cy+sz*0.20);
+    ctx.stroke();
+  } else if(type==='profile'){
+    // Medal: circle + ribbon + star center
+    ctx.beginPath(); ctx.arc(cx,cy+sz*0.10,sz*0.26,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx-sz*0.10,cy-sz*0.18); ctx.lineTo(cx-sz*0.20,cy-sz*0.46);
+    ctx.moveTo(cx+sz*0.10,cy-sz*0.18); ctx.lineTo(cx+sz*0.20,cy-sz*0.46);
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy+sz*0.10,sz*0.10,0,Math.PI*2); ctx.fill();
+  }
+  ctx.restore();
 }
 
 // ─── NAVIGATION BAR ──────────────────────────────────────────────────────────
 function drawNav(){
-  const cfg=(ST==='PLAY'&&pl)?pl.cfg:CHAR[selC];
   const ng=ctx.createLinearGradient(0,VH-NAV_H,0,VH);
-  ng.addColorStop(0,'rgba(4,4,20,0.82)'); ng.addColorStop(1,'rgba(4,4,20,0.97)');
+  ng.addColorStop(0,'rgba(6,8,24,0.92)'); ng.addColorStop(1,'rgba(6,8,24,0.99)');
   ctx.fillStyle=ng; ctx.fillRect(0,VH-NAV_H,VW,NAV_H);
-  ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.fillRect(0,VH-NAV_H,VW,1);
+  ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(0,VH-NAV_H,VW,1);
 
   const tabW=VW/NAV_TABS.length;
   NAV_TABS.forEach((tab,i)=>{
     const x=i*tabW, cx=x+tabW/2, active=navTab===tab;
     if(active){
-      ctx.fillStyle=cfg.c+'1E'; ctx.fillRect(x,VH-NAV_H,tabW,NAV_H);
-      ctx.fillStyle=cfg.c; ctx.fillRect(x+6,VH-NAV_H,tabW-12,2);
+      // Orange top indicator line
+      ctx.fillStyle='#F39C12'; ctx.fillRect(x+4,VH-NAV_H,tabW-8,2);
+      // Subtle orange bg tint
+      const tg=ctx.createLinearGradient(x,VH-NAV_H,x,VH);
+      tg.addColorStop(0,'rgba(243,156,18,0.14)'); tg.addColorStop(1,'rgba(243,156,18,0.03)');
+      ctx.fillStyle=tg; ctx.fillRect(x,VH-NAV_H,tabW,NAV_H);
     }
-    ctx.font='20px sans-serif'; ctx.textAlign='center';
-    ctx.fillStyle=active?cfg.c:'rgba(255,255,255,0.38)';
-    ctx.fillText(NAV_ICONS[i],cx,VH-NAV_H+28);
-    ctx.font=(active?'bold ':'')+' 9px sans-serif';
-    ctx.fillStyle=active?'#FFF':'rgba(255,255,255,0.32)';
-    ctx.fillText(NAV_LABELS[i],cx,VH-NAV_H+46);
+    const col=active?'#F39C12':'rgba(255,255,255,0.36)';
+    navIcon(NAV_ICONS[i], cx, VH-NAV_H+24, 20, col);
+    ctx.font=(active?'bold ':'')+'9px sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle=active?'#F39C12':'rgba(255,255,255,0.30)';
+    ctx.fillText(NAV_LABELS[i], cx, VH-NAV_H+46);
   });
 }
 
@@ -280,10 +342,10 @@ function drawNav(){
 function drawTabScreen(tab){
   ctx.fillStyle='rgba(4,4,20,0.88)';
   ctx.fillRect(0,HDR_H,VW,VH-HDR_H-NAV_H);
-  if(tab==='inventory') drawInventoryTab();
-  else if(tab==='friends')   drawFriendsTab();
-  else if(tab==='quests')    drawQuestsTab();
-  else if(tab==='profile')   drawProfileTab();
+  if(tab==='character') drawCharacterTab();
+  else if(tab==='map')     drawMapTab();
+  else if(tab==='quests')  drawQuestsTab();
+  else if(tab==='profile') drawProfileTab();
 }
 
 function tabTitle(text){
@@ -293,8 +355,8 @@ function tabTitle(text){
   ctx.fillText(text,VW/2,HDR_H+28);
 }
 
-function drawInventoryTab(){
-  tabTitle('ИНВЕНТАРЬ');
+function drawCharacterTab(){
+  tabTitle('ПЕРСОНАЖ');
   const c=(ST==='PLAY'&&pl)?pl.char:selC;
   const cfg=CHAR[c];
   const ad=imgs.ch[c].idle;
@@ -328,23 +390,46 @@ function drawInventoryTab(){
   });
 }
 
-function drawFriendsTab(){
-  tabTitle('ДРУЗЬЯ');
-  const y=HDR_H+80;
-  ctx.font='44px sans-serif'; ctx.textAlign='center';
-  ctx.fillText('👥',VW/2,y+44);
-  ctx.fillStyle='rgba(255,255,255,0.60)'; ctx.font='bold 15px sans-serif';
-  ctx.fillText('Список друзей пуст',VW/2,y+96);
-  ctx.fillStyle='rgba(255,255,255,0.32)'; ctx.font='12px sans-serif';
-  ctx.fillText('Пригласите друзей и сражайтесь вместе!',VW/2,y+120);
-  const bw=210, bh=44, bx=(VW-bw)/2, by=y+152;
-  rR(bx,by,bw,bh,8);
-  const bg=ctx.createLinearGradient(bx,0,bx+bw,0);
-  bg.addColorStop(0,'#3498DB66'); bg.addColorStop(1,'#2980B966');
-  ctx.fillStyle=bg; ctx.fill();
-  ctx.strokeStyle='#3498DB88'; ctx.lineWidth=1; ctx.stroke();
-  ctx.fillStyle='#FFF'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
-  ctx.fillText('+ Пригласить',VW/2,by+28);
+function drawMapTab(){
+  tabTitle('КАРТА');
+  const mapX=20, mapY=HDR_H+54, mapW=VW-40, mapH=220;
+  // Map panel background
+  rR(mapX,mapY,mapW,mapH,8);
+  const mg=ctx.createLinearGradient(mapX,mapY,mapX,mapY+mapH);
+  mg.addColorStop(0,'rgba(10,32,18,0.85)'); mg.addColorStop(1,'rgba(4,20,10,0.85)');
+  ctx.fillStyle=mg; ctx.fill();
+  ctx.strokeStyle='rgba(46,204,113,0.20)'; ctx.lineWidth=1; ctx.stroke();
+  // Grid lines
+  ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+  for(let i=1;i<5;i++){
+    ctx.beginPath(); ctx.moveTo(mapX,mapY+i*44); ctx.lineTo(mapX+mapW,mapY+i*44); ctx.stroke();
+  }
+  for(let i=1;i<6;i++){
+    ctx.beginPath(); ctx.moveTo(mapX+i*(mapW/6),mapY); ctx.lineTo(mapX+i*(mapW/6),mapY+mapH); ctx.stroke();
+  }
+  ctx.restore();
+  // Enemy markers (decorative)
+  [[0.25,0.35,'#E74C3C'],[0.70,0.65,'#E74C3C'],[0.55,0.25,'#9B59B6']].forEach(([rx,ry,mc])=>{
+    const ex=mapX+mapW*rx, ey=mapY+mapH*ry;
+    ctx.fillStyle=mc+'AA'; ctx.beginPath(); ctx.arc(ex,ey,5,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=mc; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(ex,ey,5,0,Math.PI*2); ctx.stroke();
+  });
+  // Player pin with pulsing ring
+  const px=VW/2, py=mapY+mapH*0.50;
+  const t=(Date.now()/700)%1;
+  ctx.save(); ctx.globalAlpha=0.55*(1-t);
+  ctx.strokeStyle='#F39C12'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(px,py,8+t*22,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='#F39C12'; ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(8,10,30,0.9)'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('!',px,py+4);
+  // Stats below map
+  const sy=mapY+mapH+24;
+  ctx.fillStyle='rgba(255,255,255,0.60)'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Текущая локация', VW/2, sy);
+  ctx.fillStyle='rgba(255,255,255,0.30)'; ctx.font='11px sans-serif';
+  ctx.fillText('Лучшая волна: '+bestWave+'   •   Игр сыграно: '+gamesPlayed, VW/2, sy+22);
 }
 
 function drawQuestsTab(){
