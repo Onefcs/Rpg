@@ -3,6 +3,28 @@ const VW=540, VH=960;
 const GY=VH*0.84;
 const PX=VW*0.18;
 
+// Telegram-style GUI palette (applies to menus/HUD only — the game world
+// keeps its own art direction).
+const TG={
+  bg:      '#0E1621',
+  panel:   '#17212B',
+  card:    '#1C2733',
+  cardHi:  '#232E3C',
+  selected:'#2B5278',
+  divider: 'rgba(255,255,255,0.07)',
+  blue:    '#2AABEE',
+  blue2:   '#229ED9',
+  blueSoft:'rgba(42,171,238,0.16)',
+  green:   '#4FCE5D',
+  red:     '#EC3942',
+  gold:    '#F0A93B',
+  txt:     '#FFFFFF',
+  txt2:    'rgba(255,255,255,0.58)',
+  txt3:    'rgba(255,255,255,0.36)',
+};
+// Rotating accent colors for icon tiles (Telegram Settings-style).
+const TG_ICON_COLORS=['#2AABEE','#4FCE5D','#8E7CF0','#F0A93B','#EC3942','#31C7C2','#E066B0','#6B93F2','#F0D93B','#5FBF6B'];
+
 const BGS=['BG_01','BG_02','BG_03','BG_04'];
 
 const BG_CONFIG={

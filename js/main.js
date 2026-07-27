@@ -49,13 +49,14 @@ function loop(t){
 }
 
 function drawLoad(){
-  ctx.fillStyle='#08080F'; ctx.fillRect(0,0,VW,VH);
-  const p=tot>0?ldn/tot:0, bw=VW*0.5, bh=16, bx=(VW-bw)/2, by=VH/2;
-  ctx.fillStyle='#1A1A2E'; ctx.fillRect(bx,by,bw,bh);
-  ctx.fillStyle='#F39C12'; ctx.fillRect(bx,by,bw*p,bh);
-  ctx.strokeStyle='#F39C12'; ctx.lineWidth=1.5; ctx.strokeRect(bx,by,bw,bh);
-  ctx.fillStyle='#EEE'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center';
-  ctx.fillText('Загрузка '+Math.round(p*100)+'%',VW/2,by-12);
-  ctx.font='bold 42px sans-serif'; ctx.fillStyle='#F39C12';
-  ctx.fillText('HERO RUNNER',VW/2,VH*0.4);
+  ctx.fillStyle=TG.bg; ctx.fillRect(0,0,VW,VH);
+  const p=tot>0?ldn/tot:0, bw=VW*0.5, bh=10, bx=(VW-bw)/2, by=VH/2;
+  rR(bx,by,bw,bh,bh/2); ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fill();
+  rR(bx,by,Math.max(bw*p,bh),bh,bh/2); ctx.fillStyle=TG.blue; ctx.fill();
+  ctx.fillStyle=TG.txt2; ctx.font='bold 15px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Загрузка '+Math.round(p*100)+'%',VW/2,by-16);
+  ctx.font='bold 40px sans-serif'; ctx.fillStyle=TG.txt;
+  ctx.fillText('HERO',VW/2,VH*0.4-20);
+  ctx.fillStyle=TG.blue;
+  ctx.fillText('RUNNER',VW/2,VH*0.4+24);
 }
