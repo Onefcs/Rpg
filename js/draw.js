@@ -519,6 +519,22 @@ function drawMapTab(){
 
     ctx.textAlign='left';
   });
+
+  if(mapMsg){
+    const age=performance.now()-mapMsg.t;
+    if(age<1600){
+      const a=Math.min(1,(1600-age)/400,age/150);
+      ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+      const tw=ctx.measureText(mapMsg.text).width+24;
+      const tx2=(VW-tw)/2, ty2=HDR_H+56;
+      ctx.save(); ctx.globalAlpha=a;
+      rR(tx2,ty2,tw,32,16); ctx.fillStyle='rgba(10,10,20,0.92)'; ctx.fill();
+      ctx.strokeStyle='#E74C3C'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='#FFF'; ctx.fillText(mapMsg.text, VW/2, ty2+21);
+      ctx.restore();
+      ctx.textAlign='left';
+    } else mapMsg=null;
+  }
 }
 
 function drawQuestsTab(){

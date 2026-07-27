@@ -28,7 +28,16 @@ function tap(cx,cy){
     const cardH=152, cardGap=8, startY=HDR_H+56;
     LOCATIONS.forEach((loc,i)=>{
       const cy=startY+i*(cardH+cardGap);
-      if(ty>=cy&&ty<=cy+cardH&&tx>=10&&tx<=VW-10&&totalKills>=unlockAt[i]) curLoc=i;
+      if(ty>=cy&&ty<=cy+cardH&&tx>=10&&tx<=VW-10){
+        if(totalKills>=unlockAt[i]){
+          curLoc=i;
+          // Apply immediately if a run is already in progress — otherwise the
+          // pick silently does nothing until the player dies and restarts.
+          if(ST==='PLAY'){
+            curBG=loc.bg; bgO=bgO.map(()=>0); gspd=loc.spd;
+          }
+        } else mapMsg={t:performance.now(), text:'🔒 Ещё '+(unlockAt[i]-totalKills)+' убийств до разблокировки'};
+      }
     });
     return;
   }
