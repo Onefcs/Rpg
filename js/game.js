@@ -38,7 +38,7 @@ function startGame(){
   pl={char:selC,cfg,state:'run',fr:0,ft:0,hp:e.hp,mhp:e.hp,al:false,ht:0};
   en=[]; pt=[];
   curBG=LOCATIONS[curLoc].bg;
-  bgO=Array(4).fill(0); bgCT=0;
+  bgO=Array(5).fill(0); bgCT=0;
   gspd=LOCATIONS[curLoc].spd;
   sc=0; spT=1800; dst=0;
   ST='PLAY';

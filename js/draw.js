@@ -1,3 +1,14 @@
+// Offscreen buffer used to tint the player sprite before the glow pass, so
+// the source-atop tint recolours only the crisp sprite and not the glow halo.
+let plBuf=null, plBufCtx=null;
+function plBufFor(w,h){
+  if(!plBuf){ plBuf=document.createElement('canvas'); plBufCtx=plBuf.getContext('2d'); }
+  const iw=Math.ceil(w), ih=Math.ceil(h);
+  if(plBuf.width!==iw||plBuf.height!==ih){ plBuf.width=iw; plBuf.height=ih; }
+  else plBufCtx.clearRect(0,0,iw,ih);
+  return plBufCtx;
+}
+
 function drawGame(){
   drawBG();
   // Ground shadow strip with gradient
@@ -41,22 +52,60 @@ function drawPlayer(){
   const dh=sh*cfg.sc, dw=sw*cfg.sc;
   const dx=PX-dw*0.5, dy=GY-dh;
 
-  // Ground shadow ellipse
-  ctx.save(); ctx.globalAlpha=0.28;
-  ctx.fillStyle='#000';
-  ctx.beginPath(); ctx.ellipse(PX,GY+3,dw*0.48,5,0,0,Math.PI*2); ctx.fill();
+  // Squash & stretch: a soft bounce while running, a quick impact pulse right
+  // on the attack's hit frame. Pure transform — the sprite art is untouched.
+  let scX=1, scY=1;
+  const mf=ad.f||1;
+  if(pl.state==='run'){
+    const phase=((pl.fr + pl.ft/78) / mf) * Math.PI*2;
+    const bounce=Math.sin(phase*2);
+    scY=1 - bounce*0.035;
+    scX=1 + bounce*0.025;
+  } else if(pl.state==='attack'){
+    const hf=Math.floor(mf*0.55);
+    const k=Math.max(0, 1-Math.abs(pl.fr-hf));
+    scX=1 + k*0.09;
+    scY=1 - k*0.05;
+  }
+
+  // Soft radial contact shadow (grounds the sprite regardless of scene)
+  const shg=ctx.createRadialGradient(PX,GY+3,0,PX,GY+3,dw*0.50);
+  shg.addColorStop(0,'rgba(0,0,0,0.40)');
+  shg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.save(); ctx.fillStyle=shg;
+  ctx.beginPath(); ctx.ellipse(PX,GY+3,dw*0.50,6,0,0,Math.PI*2); ctx.fill();
   ctx.restore();
 
+  ctx.save();
+  ctx.translate(PX,GY); ctx.scale(scX,scY); ctx.translate(-PX,-GY);
+
   if(pl.ht>0&&Math.floor(pl.ht/65)%2===0){
-    ctx.save();
-    ctx.globalAlpha=0.35;
+    ctx.globalAlpha=0.55;
     ctx.drawImage(ad.im,sx,sy,sw,sh,dx,dy,dw,dh);
     ctx.globalAlpha=1;
-    ctx.fillStyle='rgba(255,60,60,0.28)'; ctx.fillRect(dx,dy,dw,dh);
-    ctx.restore();
+    // Flash red, clipped to the sprite's own silhouette (not a blocky rect)
+    ctx.globalCompositeOperation='source-atop';
+    ctx.fillStyle='rgba(255,60,60,0.55)';
+    ctx.fillRect(dx,dy,dw,dh);
+    ctx.globalCompositeOperation='source-over';
   }else{
-    ctx.drawImage(ad.im,sx,sy,sw,sh,dx,dy,dw,dh);
+    // Tint the crisp sprite in an offscreen buffer first (source-atop there
+    // touches only the sprite's own pixels), then draw that buffer with a
+    // class-colour glow — so the glow halo itself never gets recoloured.
+    const bctx=plBufFor(dw,dh);
+    bctx.drawImage(ad.im,sx,sy,sw,sh,0,0,dw,dh);
+    const tint=BG_TINT[BGS[curBG]];
+    if(tint){
+      bctx.globalCompositeOperation='source-atop';
+      bctx.fillStyle=tint;
+      bctx.fillRect(0,0,dw,dh);
+      bctx.globalCompositeOperation='source-over';
+    }
+    ctx.shadowColor=cfg.c; ctx.shadowBlur=9;
+    ctx.drawImage(plBuf,0,0,dw,dh,dx,dy,dw,dh);
+    ctx.shadowBlur=0;
   }
+  ctx.restore();
 }
 
 function drawEnemy(e){
@@ -66,9 +115,11 @@ function drawEnemy(e){
   const bob=dead?0:Math.sin(Date.now()/180+e.x*0.05)*2.5;
   ctx.save(); ctx.globalAlpha=al;
 
-  // Ground shadow
-  ctx.fillStyle='rgba(0,0,0,0.22)';
-  ctx.beginPath(); ctx.ellipse(cx,GY+4,w*0.50,5,0,0,Math.PI*2); ctx.fill();
+  // Ground shadow (soft radial, matches the player's contact shadow)
+  const esh=ctx.createRadialGradient(cx,GY+4,0,cx,GY+4,w*0.55);
+  esh.addColorStop(0,'rgba(0,0,0,0.30)'); esh.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=esh;
+  ctx.beginPath(); ctx.ellipse(cx,GY+4,w*0.55,5,0,0,Math.PI*2); ctx.fill();
 
   const bc=dead?'#555':et.c;
 
