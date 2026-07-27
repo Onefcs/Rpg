@@ -18,28 +18,28 @@ const CORD=['warrior','mage','archer','assasin','zhnec'];
 // tx/ty=offset of trimmed region inside raw frame, tw/th=trimmed size
 const SPRITE_META={
   assasin:{
-    idle:  {f:5,  w:480,  h:96,  tx:32, ty:29, tw:27, th:37},
-    run:   {f:8,  w:768,  h:96,  tx:33, ty:24, tw:31, th:42},
-    attack:{f:6,  w:576,  h:96,  tx:27, ty:21, tw:69, th:48},
+    idle:  {f:5,  w:480,  h:96,  tx:30, ty:29, tw:29, th:37},
+    run:   {f:8,  w:768,  h:96,  tx:31, ty:24, tw:33, th:42},
+    attack:{f:6,  w:576,  h:96,  tx:4,  ty:21, tw:92, th:48},
   },
   mage:{
-    idle:  {f:5,  w:480,  h:64,  tx:37, ty:16, tw:31, th:35},
-    run:   {f:8,  w:768,  h:64,  tx:38, ty:15, tw:46, th:37},
-    attack:{f:7,  w:672,  h:64,  tx:37, ty:10, tw:58, th:52},
+    idle:  {f:5,  w:480,  h:64,  tx:37, ty:16, tw:35, th:35},
+    run:   {f:8,  w:768,  h:64,  tx:33, ty:15, tw:51, th:37},
+    attack:{f:7,  w:672,  h:64,  tx:19, ty:10, tw:76, th:52},
   },
   warrior:{
-    idle:  {f:5,  w:480,  h:64,  tx:37, ty:13, tw:21, th:35},
-    run:   {f:7,  w:672,  h:64,  tx:35, ty:15, tw:33, th:33},
-    attack:{f:5,  w:480,  h:64,  tx:30, ty:6,  tw:63, th:42},
+    idle:  {f:5,  w:480,  h:64,  tx:34, ty:13, tw:24, th:35},
+    run:   {f:7,  w:672,  h:64,  tx:35, ty:15, tw:35, th:33},
+    attack:{f:5,  w:480,  h:64,  tx:13, ty:6,  tw:80, th:42},
   },
   archer:{
-    idle:  {f:14, w:1344, h:80,  tx:28, ty:24, tw:41, th:40},
-    run:   {f:8,  w:768,  h:80,  tx:32, ty:21, tw:32, th:43},
-    attack:{f:11, w:1056, h:80,  tx:30, ty:22, tw:66, th:42},
+    idle:  {f:14, w:1344, h:80,  tx:16, ty:24, tw:53, th:40},
+    run:   {f:8,  w:768,  h:80,  tx:26, ty:21, tw:38, th:43},
+    attack:{f:11, w:1056, h:80,  tx:3,  ty:22, tw:93, th:42},
   },
   zhnec:{
-    idle:  {f:6,  w:768,  h:108, tx:49, ty:44, tw:38, th:52},
-    run:   {f:8,  w:1024, h:108, tx:34, ty:49, tw:54, th:53},
+    idle:  {f:6,  w:768,  h:108, tx:49, ty:44, tw:40, th:52},
+    run:   {f:8,  w:1024, h:108, tx:34, ty:49, tw:55, th:53},
     attack:{f:6,  w:768,  h:108, tx:29, ty:38, tw:84, th:63},
   },
 };
