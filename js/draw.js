@@ -80,14 +80,18 @@ function drawPlayer(){
   ctx.translate(PX,GY); ctx.scale(scX,scY); ctx.translate(-PX,-GY);
 
   if(pl.ht>0&&Math.floor(pl.ht/65)%2===0){
-    ctx.globalAlpha=0.55;
-    ctx.drawImage(ad.im,sx,sy,sw,sh,dx,dy,dw,dh);
-    ctx.globalAlpha=1;
-    // Flash red, clipped to the sprite's own silhouette (not a blocky rect)
-    ctx.globalCompositeOperation='source-atop';
-    ctx.fillStyle='rgba(255,60,60,0.55)';
-    ctx.fillRect(dx,dy,dw,dh);
-    ctx.globalCompositeOperation='source-over';
+    // Flash red, clipped to the sprite's own silhouette. Must composite in an
+    // offscreen buffer — source-atop against the main canvas would match the
+    // already-opaque background behind the sprite and paint a solid block.
+    const bctx=plBufFor(dw,dh);
+    bctx.globalAlpha=0.55;
+    bctx.drawImage(ad.im,sx,sy,sw,sh,0,0,dw,dh);
+    bctx.globalAlpha=1;
+    bctx.globalCompositeOperation='source-atop';
+    bctx.fillStyle='rgba(255,60,60,0.85)';
+    bctx.fillRect(0,0,dw,dh);
+    bctx.globalCompositeOperation='source-over';
+    ctx.drawImage(plBuf,0,0,dw,dh,dx,dy,dw,dh);
   }else{
     // Tint the crisp sprite in an offscreen buffer first (source-atop there
     // touches only the sprite's own pixels), then draw that buffer with a

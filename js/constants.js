@@ -71,9 +71,9 @@ const ET=[
 ];
 
 const LOCATIONS=[
-  {n:'Зелёный лес',          icon:'🌲', bg:0, tier:1, hpMult:1.0,  xpMult:1.0, spd:3.5},
+  {n:'Зелёный лес',          icon:'🌲', bg:2, tier:1, hpMult:1.0,  xpMult:1.0, spd:3.5},
   {n:'Тёмные холмы',          icon:'⛰', bg:1, tier:2, hpMult:2.5,  xpMult:2.0, spd:4.5},
-  {n:'Вулканические равнины', icon:'🌋', bg:2, tier:3, hpMult:6.0,  xpMult:4.0, spd:5.5},
+  {n:'Вулканические равнины', icon:'🌋', bg:0, tier:3, hpMult:6.0,  xpMult:4.0, spd:5.5},
   {n:'Проклятые земли',       icon:'💀', bg:3, tier:4, hpMult:14.0, xpMult:8.0, spd:7.0},
 ];
 
