@@ -5,22 +5,11 @@ const PX=VW*0.18;
 
 const BGS=['BG_01','BG_02','BG_03','BG_04'];
 
-// speeds[4] is the new far-sky "epic" layer (floating islands / dragon / ruins) —
-// slower than speeds[0] so it reads as farther away than the back mountains.
 const BG_CONFIG={
-  BG_01:{speeds:[0.05, 0.15, 0.55, 1.10, 0.020]},
-  BG_02:{speeds:[0.04, 0.12, 0.45, 1.10, 0.015]},
-  BG_03:{speeds:[0.05, 0.14, 0.50, 1.10, 0.022]},
-  BG_04:{speeds:[0.06, 0.18, 0.48, 1.10, 0.028]},
-};
-
-// Ambient scene-light tint applied to the player sprite (source-atop, cheap
-// per-pixel-shape recolor) so the hero visually sits inside each backdrop.
-const BG_TINT={
-  BG_01:'rgba(255,150,60,0.16)',
-  BG_02:'rgba(90,120,210,0.22)',
-  BG_03:'rgba(210,255,220,0.09)',
-  BG_04:'rgba(255,70,60,0.20)',
+  BG_01:{speeds:[0.05, 0.15, 0.55, 1.10]},
+  BG_02:{speeds:[0.04, 0.12, 0.45, 1.10]},
+  BG_03:{speeds:[0.05, 0.14, 0.50, 1.10]},
+  BG_04:{speeds:[0.06, 0.18, 0.48, 1.10]},
 };
 
 const CORD=['warrior','mage','archer','assasin','zhnec'];
@@ -71,9 +60,9 @@ const ET=[
 ];
 
 const LOCATIONS=[
-  {n:'Зелёный лес',          icon:'🌲', bg:2, tier:1, hpMult:1.0,  xpMult:1.0, spd:3.5},
+  {n:'Зелёный лес',          icon:'🌲', bg:0, tier:1, hpMult:1.0,  xpMult:1.0, spd:3.5},
   {n:'Тёмные холмы',          icon:'⛰', bg:1, tier:2, hpMult:2.5,  xpMult:2.0, spd:4.5},
-  {n:'Вулканические равнины', icon:'🌋', bg:0, tier:3, hpMult:6.0,  xpMult:4.0, spd:5.5},
+  {n:'Вулканические равнины', icon:'🌋', bg:2, tier:3, hpMult:6.0,  xpMult:4.0, spd:5.5},
   {n:'Проклятые земли',       icon:'💀', bg:3, tier:4, hpMult:14.0, xpMult:8.0, spd:7.0},
 ];
 
