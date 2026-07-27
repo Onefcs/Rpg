@@ -20,12 +20,12 @@ const SPRITE_META={
   assasin:{
     idle:  {f:5,  w:480,  h:96,  tx:30, ty:29, tw:29, th:37},
     run:   {f:8,  w:768,  h:96,  tx:31, ty:24, tw:33, th:42},
-    attack:{f:6,  w:576,  h:96,  tx:4,  ty:21, tw:92, th:48},
+    attack:{f:6,  w:576,  h:96,  tx:4,  ty:21, tw:92, th:45},
   },
   mage:{
     idle:  {f:5,  w:480,  h:64,  tx:37, ty:16, tw:35, th:35},
-    run:   {f:8,  w:768,  h:64,  tx:33, ty:15, tw:51, th:37},
-    attack:{f:7,  w:672,  h:64,  tx:19, ty:10, tw:76, th:52},
+    run:   {f:8,  w:768,  h:64,  tx:33, ty:15, tw:51, th:36},
+    attack:{f:7,  w:672,  h:64,  tx:19, ty:10, tw:76, th:41},
   },
   warrior:{
     idle:  {f:5,  w:480,  h:64,  tx:34, ty:13, tw:24, th:35},
@@ -39,8 +39,8 @@ const SPRITE_META={
   },
   zhnec:{
     idle:  {f:6,  w:768,  h:108, tx:49, ty:44, tw:40, th:52},
-    run:   {f:8,  w:1024, h:108, tx:34, ty:49, tw:55, th:53},
-    attack:{f:6,  w:768,  h:108, tx:29, ty:38, tw:84, th:63},
+    run:   {f:8,  w:1024, h:108, tx:34, ty:49, tw:55, th:51},
+    attack:{f:6,  w:768,  h:108, tx:29, ty:38, tw:84, th:58},
   },
 };
 

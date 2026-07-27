@@ -82,7 +82,7 @@ function updGame(dt){
   const nr=alive[0];
   if(nr&&nr.x-PX<VW*0.40&&pl.state==='run'){pl.state='attack';pl.fr=0;pl.ft=0;pl.al=false;}
 
-  const fd=pl.state==='attack'?52/es.as:78;
+  const fd=pl.state==='attack'?104/es.as:78;
   pl.ft+=dt;
   if(pl.ft>=fd){
     pl.ft-=fd;
