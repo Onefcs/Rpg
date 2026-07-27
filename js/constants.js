@@ -38,9 +38,9 @@ const SPRITE_META={
     attack:{f:11, w:1056, h:80,  tx:30, ty:22, tw:66, th:42},
   },
   zhnec:{
-    idle:  {f:8,  w:768,  h:108, tx:0,  ty:44, tw:96, th:52},
+    idle:  {f:6,  w:768,  h:108, tx:49, ty:44, tw:38, th:52},
     run:   {f:8,  w:1024, h:108, tx:34, ty:49, tw:54, th:53},
-    attack:{f:8,  w:768,  h:108, tx:0,  ty:38, tw:96, th:63},
+    attack:{f:6,  w:768,  h:108, tx:29, ty:38, tw:84, th:63},
   },
 };
 
