@@ -27,11 +27,16 @@ const TG_ICON_COLORS=['#2AABEE','#4FCE5D','#8E7CF0','#F0A93B','#EC3942','#31C7C2
 
 const BGS=['BG_01','BG_02','BG_03','BG_04'];
 
+// PNG parallax layers per background (from back to front). 'sky' is drawn
+// static (full-bleed, no scroll); the rest scroll at BG_CONFIG.speeds[i].
+const BG_LAYERS=['sky','bg_decor','middle_decor','ground_01','ground_02','foreground'];
+const BG_SCROLL_LAYERS=BG_LAYERS.slice(1);
+
 const BG_CONFIG={
-  BG_01:{speeds:[0.05, 0.15, 0.55, 1.10]},
-  BG_02:{speeds:[0.04, 0.12, 0.45, 1.10]},
-  BG_03:{speeds:[0.05, 0.14, 0.50, 1.10]},
-  BG_04:{speeds:[0.06, 0.18, 0.48, 1.10]},
+  BG_01:{speeds:[0.05, 0.15, 0.55, 0.85, 1.10]},
+  BG_02:{speeds:[0.04, 0.12, 0.45, 0.80, 1.10]},
+  BG_03:{speeds:[0.05, 0.14, 0.50, 0.82, 1.10]},
+  BG_04:{speeds:[0.06, 0.18, 0.48, 0.85, 1.10]},
 };
 
 const CORD=['warrior','mage','archer','assasin','zhnec'];

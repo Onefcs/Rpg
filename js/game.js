@@ -38,7 +38,7 @@ function startGame(){
   pl={char:selC,cfg,state:'run',fr:0,ft:0,hp:e.hp,mhp:e.hp,al:false,ht:0};
   en=[]; pt=[];
   curBG=LOCATIONS[curLoc].bg;
-  bgO=Array(4).fill(0); bgCT=0;
+  bgO=Array(BG_SCROLL_LAYERS.length).fill(0); bgCT=0;
   gspd=LOCATIONS[curLoc].spd;
   sc=0; spT=1800; dst=0;
   ST='PLAY';
@@ -49,7 +49,7 @@ function updGame(dt){
 
   const es=eff();
   const bgCfg=BG_CONFIG[BGS[curBG]];
-  if(pl.state==='run') bgO=bgO.map((o,i)=>(o+bgCfg.speeds[i]*gspd*dt/16)%VW);
+  if(pl.state==='run') bgO=bgO.map((o,i)=>o+bgCfg.speeds[i]*gspd*dt/16);
 
   spT-=dt;
   if(spT<=0){ spawn(); spT=Math.max(900,2600-curLoc*250)+Math.random()*600; }

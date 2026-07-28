@@ -9,16 +9,16 @@ const CARD_THEME={
 
 function initSel(){
   saf=Array(5).fill(0); sat=0;
-  curBG=0; bgCT=0; bgO=Array(4).fill(0);
+  curBG=0; bgCT=0; bgO=Array(BG_SCROLL_LAYERS.length).fill(0);
 }
 
 function updSel(dt){
   sat+=dt;
   if(sat>110){sat=0;CORD.forEach((c,i)=>{saf[i]=(saf[i]+1)%imgs.ch[c].idle.f;});}
   const bgCfg=BG_CONFIG[BGS[curBG]];
-  bgO=bgO.map((o,i)=>(o+bgCfg.speeds[i]*1.8)%VW);
+  bgO=bgO.map((o,i)=>o+bgCfg.speeds[i]*1.8);
   bgCT+=dt;
-  if(bgCT>40000){bgCT=0;curBG=(curBG+1)%BGS.length;bgO=Array(4).fill(0);}
+  if(bgCT>40000){bgCT=0;curBG=(curBG+1)%BGS.length;bgO=Array(BG_SCROLL_LAYERS.length).fill(0);}
 }
 
 function drawSel(){
